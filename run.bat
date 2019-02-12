@@ -1,60 +1,70 @@
+COLOR F9
 if not defined in_subprocess (cmd /k set in_subprocess=y ^& %0 %*) & exit )
 @echo off
 mode con:cols=100 lines=50
 
-echo hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhyhyyyhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhyyyyyhhddhyyssssyhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhyyssyysoooooo++/++/++++/+oosososssyhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhhhhhhhhhhhyssssssso++oooo+++//////++++++++oo+//:/syhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhhhhhhhhhysoossyyysssoo+++++++ooo++++++++++ooooso//++osyhhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhhhhhhyyyssssyssooooooo+++ooo++///++++ooosyysssoso+s+/+osyyyhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhhhyyssssssssoo+oooooosso++//++ossssyhhhyysyddhdhsohssoo++s+ssshhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhhysssyyyyyssssssssssooo+++oyyyyyhhdhhddddhyydmhdssdyyyssosoo+syyhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhyyssyyhhyysyyso++++oso++osyyoosyyhhddhdmddhhhhmhhshysyyyysss++yohhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhyysyhhhyyssssooosyyyysoossyo//oydhyddhhhhhhhyyyyhyssyssyyssoss+osoyhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhyysoossyssssyyssyyhhhhyssosyso//oyhdyshyyssssssssssooooosossooosys+oosyyhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhs++osyyysyhhhhhhhhhyysosssso/+osyhhsosoo+/////++++///::::////ossooooossshhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhyyhhhsyhhddddddhyso+++++++++ooooo+o/::-----.------....`.....-/ossssoooyhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhysysyhhhhhhhysso+/::-:/oo//////:/+--............`````````````:osooo++ohhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhssssssssyyyso+///:---/os/:://:--o:............```````````````.:osso+++yhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhyssysoossssyso+//:----/ss/::::---:o-............``````.`...`````./oooo++yhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhssssssyssoosso+//:----oyo//::--../+.........``````````....`````..:+ooo+oyhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhysyhhyysssssso+/:---:yhs+/:-..../:...`````````````````````````..:+oo++yhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhyyhhhhysysyso+/::--/sho+:--....:-.```````````````````````````.-:oso+/shhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhyyhhhhyyyyssso+/:--:+s+/:-...``-.````````````````````````````..:oso++yhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhyhhhhyyyyssso/::---:+:::-.```....```````````````..```````````.:sso+shhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhyyysssso/:------:-------:::///::----.......----:::///::-..:ssosyhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhyyyyyyys+:-------://////++oooosoo+//:------:://+ooooo+++//::ssoshhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhysoossyyyyo/--...---:////+oossyyssssoo+/:.``.-:+osyyyyysso+///:+sshhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhy+/++osyyyyo/-....---::/+oyhhdddhoshyyso/-.` `.:syyddddyoyyyo/:-:syhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhh+so/+ossyyo/-......--:://++/osso//oo+///-.````-+o++ooo+///+//:-/yhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhy/+/-:/ooyyo:-..............--::::::-----...```-::::::::::---...+hhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhho:--:oyoos+:---...`````````........```.....```.--.............-yhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhy/--/os::+/:----...``````````````````.....`````....```````````:hhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhho.-:/:--///:::---...````````````````.....```````...``````````:hhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhs:------://::::---...````````````....`......``.......````````:hhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhs/:-..--:/:::::----...````````..--:::/+++/::///+/---..````..:hhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhyo+:..--:/::::::----...````..---.-:oyyyyssoosso/-----.....-+hhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhhys/::++:::::::::---......-:-.....-:://+++++/:--.--::----:shhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhhhhhhyss/:::::::::-------::--..........-------...----::::+yhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhhhhhhy+//:::::::::::--:-----------:::::///////::-:-----:/ohhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhhhhdhhhhh+--:::::::///::::----:/+oo+++++///////+/++++/:---:oyhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhyyyhNhyhho-.-//:::::////::--.-----..-----.....------..----/yhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhyyyyhdyhhs/..:/::-:::////:::--......---:::://///:--...--:/ohhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhhyyyyhmyyyyo-../+/::::://///::------..---::::::---..-----:ohhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhyyhyyydhyyyho-.-+o++/:::///++/::-----..--...........----:oyhhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhhhhhhhhyydhyyhhyyhdhs:.-/ssso+/:::://::-----......`.........--:oyhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhhyyNmyyyyyyhyyyhdhyhmhy+..:oyyyso//:::::---................---:oyhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhhhysodhyhmyhdhyysyhdysydyyy:.-/osyhyso++///::-------------:::::+syhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhhysssoshhdmyyddmmmdyyhyshdyyh+.-:/+oyyhyyysso++/:::::///++++++osyhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo hhhyyysssooyddyhddhdmNNyshysddyyhs:--::+osyyyyyyyyysssssssyyyso/omdhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-echo yysyyyyyyssooyhhhddhhhddoyhyyddysyhs/--::/+ossyyyyyyyyysssso+/::yNmdyyhhhyhhyyhhhhhhhhhhhhhhhhhhhhhh
-echo ssyyyssssssssoossyddhhhdssyhyhmdyssddhs/-:://++osssyssssso+//::/mNNmdyshhhyshhyyhhhhhhhhhhhhhhdddddd
-echo syssyyyssssysyyyyssyhhhdhssyhdhmdhhhyhhhy+:-:::/++ooooooo++/:::yNNNNNdysyyhysyhyyyydddhddddddddddddd
-echo ssssssyhyyyyyyyyhmdddhyydysoydddmhmmhshdhhyo:-::://++++++//:::/mNmmNNNdysooyysshhssydmdddddddhhhdhhd
-echo ssssssssyyyysyyyssydmNNNhysysooyhyhhhhyhddhyhs/-:::///////::::sNNmmmNNNdhsoosysoyhyssdmdddddhhhhhhhh
-TIMEOUT /T 1
+echo NNNNNNMMMNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNNNNNmmmmmmNNNNNNNmmmmmmmmNNNNNNNmddmNNNNNN
+echo NNNNNNMNNMNNMMMMMMMMMMMMMMMMMMMMMNMMMMMMMMMMMMMMMMMMMNNNNNNNNNmmmmmmmmmNmmNNNNmmmmmNNNNNNNNmddmNNNNN
+echo NNNNNNNNMMMMMMMMMMMMMMMMMMMMMMMMMMNMMMMMMMMMMMMMMMMMMMMNmmNNNmmmmmmmmmmmmdmNNmmmmmmmmmNNNNNmmddmNNNN
+echo NNNNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNNNMMMMMMMMMMMMMMMNNNNmmNNNmmmmmmmmmmmhmNmmmmmmmmmmmNNNNNmmdmNNN
+echo NNNNNNNMMMMMMMMMMMMMMMMMMMMMMMMmhhdyhddmmmmmdhyyhhmNNNNmhyyysyydmmmNNNNmdmmhNmmmmmmmmmmmmNNNNmmmdmNN
+echo NNNNNNNNNNMMMMMMMMMMMMMMMMMMMmyoysosyyo+++o+++////:://::/+oooo+//+shmmmmmNNhmmmmmmmmmmmmmmmmNNmmmdmN
+echo NNNNNNNNNNMMMMMMMMMMMMMMMMNms+oosssso+ooo+++//::::///+++++++ooo/:--:ohhyydmdhdmmmmmmmmmmmmmmmNmmmmmN
+echo NNNNNNNNNNNMMMMMMMMMMMMMNdo+osyyyhyyysoo++////+ooo+///////++o+ooyo/:/:ohhyhyymNNNNNNNNmNNNmmmNmNNmmd
+echo NNNNNNNNNNNMMMMMMMMMMMNdsosyyyyysoo++++++++ooo+/:::+++++oosyhyyhsys/y+//oshy/yddmNNNNNNNNNNNNNNNNNmm
+echo NNNNNNNNNNNMMMMMMMMMNyosyyyysso++oosssssso+/://+syyyyhdmmdhyymNdmds+dyyoo++s+oooyddNmmNmmmNNNNNNNNNN
+echo NNNNNNNNNNNMMMMMMMMdssyhhhhyyssyyyysssoo++++shddhyddNmmmmmmddhmNmmsymyhhssosoo+syohdddhhhhhddmmmmmmm
+echo NNNNNNNNNNNMMMMMMNysyhdddhyyhyso+//+oss++oshyo+shddmmmmmNmmddddNdhydhyhdyhsys++d+ymmmmdmNNmmddhhdhhd
+echo NNNNNNNNNNMMMMMNdshdddhyyyssoooshhhhy+oyyyo:/ohmdhmmddddmddhhhydyyyyyshhsysyy++ssymNNNmddNNNMNNNNNNN
+echo NNNNNNNNNNdhyssssyyyyyyyhyyyhddddyysoyhs+:/ohdmhydhysossyyssssooooosssyoossys+osyyydNNNNNddhdddmmNMM
+echo NNNNNNNNMNy+//oyhhyyhmmmddddmdhysossss+//oshdhysso+/:-:::////::------:::osyo+ooossshNNNMMNNNNmmmdddd
+echo NNNNNNNNNNNdhhdddyhdmmNNNNmdyso+////+++++++o++o/--..`````....````` `````.:osysso+osdMMMMMMMMMMMMMNmm
+echo NNNNNNNNNNNNmysyyhdddddddhys+//-..-:os::::::-/+..````````````            `-+sso++++yMMMNNNNNNmdddddd
+echo NNNNNNNNNMNNmosysssyyyhhyo+/:--.../ss:--::-..o-````````````               `-osso+//sNNmmddddddddmmmm
+echo NNNNNNNNNMNhoshsosyyyyyyo+/:-...`:ys:----..`.o.````````````        ``      `:+sso+:omNmdddmdmmmmmmmm
+echo NNNNNNNNNNh+osyyyyyssssso+/:.....ohs:--..```:/`````````          ````     ``-+ooo+/smmmmmmmmmmmmmmmm
+echo NNNNNNNNNNNmhshmddhysssyso+:....-hds/-..````:-```                         ``-+oo/:/hNNNNNNNmNmmmmmmm
+echo NNNNNNNNNNMNmshddddhyyyyys+:--..:sdo/-.`````-.`                           ``-+so/:oNNNNNNNNNNmmmmmmd
+echo NNNNNNNNNNNMNyyddddhhhyyyso/:-..-/y/:-.``` `.`                            ``-oso++dMNNNNNNNmmmmmmmdm
+echo NNNNNNNNNNNMMdymdddhhhhysso/-....-+--.``   ````                            `-sss+sNNNNNNNNmmmmmmmmdm
+echo NNNNNNNNNNNMMmhdddhdhyyyso:-......-...``...---::-..````````````...------..``-ysoodNNNNNNmmmmmmmmmddd
+echo NNNNNNNNNNNMMMddddhdhhhys/..````...----:///+oossoo+:--...`...-::+ossoo++/::--ss+hNNNmmmmmmmmmmmmmmmd
+echo NNNNNNNNNNMMMMdssssyhhhys:.`````..-::::/+ossyysysso+/:.````.-/osyhyyssso+/:-.+s+hNNmmmmmmmmmmmmmmNNm
+echo NNNNNNNNNNNMMm/://+syyyyo:.`````..--:/ohddmmmmsydhhyo/.`   `-shdmNmmdshhyo/-.-s+sNNmmmmmmmmmmmNNNNNN
+echo NNNNNNNNMNNNNy-ss/++syhho:.``````..-:/+o+/syys::oo+//:.`    -+o+osss+:/+++:-``+smNNNNmmmNNNNNNNNNNNN
+echo NNNNNNNNNNNNNy-+:.-/oshyo:.``````````````..--:----....```   `-----:::-...`````:yNNNNNNNNNNNNNNNNNNNN
+echo NNNNNNNNNNNNMm:-.`.+yosy+-.`````        `````````````````   `.``````..``````` -smMMNNNNNNNNNNNNNNNNN
+echo mNNNNNNNNNNNNNs...:oy::+/-...````                  ``````    `````           `-dmMMMNNNNNNNNNNNNNNNN
+echo NNNNNNNNNNNNNMm.`.:/:..:/-....`````                `````       ``            `-NMMMMMNNNNNNNNNNNNNNN
+echo NNNNNNNNNNNNMMN/`.`..`..::--...`````             `````````     ````         ``:MMMMMMMNNNNNNNNNNNNNN
+echo mmmNNNNNNNNNNMMh-`````..-:----...````         ```.....--:-...--:-.````     ```+MMMMMMMMMMMNNNNNNNNNN
+echo mmNNNNNNNNNNNMMMd/``````.-:----....`````    ``...`.:shdddysooshy/.`..````````:NMMMMMMMMMMMMMNNNNNNNN
+echo NNNNNNNNNNNNNMMMMMms:.`.::---.---....````````..`````-:://+ooo+:-.```....````-dMMMMMMMMMMMMMMMMMNNNNN
+echo mNNNNNNNNNNNNMMMMMMMMNdssy---.----.....``...-.``````````..---..``````.---.`.+MMMMMMMMMMMMMMMMMMMNNNN
+echo mNNNNNNNNNNNNMMMMNNNMMNy++:---------.........`````````...------...``.``..-..mMMMMMMMMMMMMMMMMMMMMMMN
+echo mmNNNNNNNNNNNMMNmmMMMMMd-..-------::---......-:/ooooooo+++//+oooooo+/-...-./MMNNNNNNNNMMMMMMMMMMMMMM
+echo NNNNNNNNNNNNNMMdhhmMddNm:.`.:--..--::---..``...-.......```````...........--dMNNNNNNNNNNNNNNNMMMMMMMM
+echo mmNNNNNNNNNNNMNyyyhmmyhm+.``::-...--:::--...````````....--------..```..---sNNNNNNNNNNNNNNNNNMMMMMMMM
+echo mNNNNNNNNNNNNMdhhhhdNhhdy/``.:/--.---::::--..````````..--------.```....:-/NNNNNNNNNNNNNNNNNNNNNNNMMM
+echo mmNNNNNNNNNNNMhhdhhhNhhddh/``-++/:----:://::-...``````.```````````````--/mNNNNNNNNNNNNNNNNNNNNNNNNNN
+echo mmNNNNNNNNmmmmhhmdhhddhhddho.`-+sso/:----:::-..`````````` ```````````.-/mNNNNNNNNNNNNNNNNNNNNmmmmmmm
+echo NNNMNMNhymmdhhhydmddddmdhmNds-`./shys+/:------.`````````````````````.-omNNNNNNNNNNNNNNNNNNNNNNNNNmmm
+echo NNNNMNy+sNdhhmhddhhyyhmmyymNhh+.`-+yhhhso/::::--.`````````````....../hNMNNNNNNNNNNNmmNNNNNNNNNNNmmmm
+echo NMNMhsssoyddmNddNmmmdhyddyymmhdy-`.:/syhdhyyso+/::-.....---::::::::omNNNNNNNNNNNNNNNNNNNNNNNNNNNmmmm
+echo MMNdyysssoydmmhdmNmNNMNshdhhmdyhh/...:/oshhhhhhhyyso++++oosyyss++hhhdmmNmmmNNNNNNNNNNNNNNNNNNmmmmmmm
+echo MmyyyhhhysooymddmNmdmNNdohdydNdyhdy/...-:+syyhhhhhhhhhyyyyyso/:-oMNdsymmhhddhdNMNNNNNNNNNmmmmmddddmm
+echo hyyhhhyhyyyyssshdmNmddmNsyddhdNdyydmds:..-:/+osyhhhhhyyysso/:--:dMMNdyoymhyhhyydNMNNNNmmmmmdmmmmmmmm
+echo yyyyyhyyyyyyysyssyhdmdmNhshhddmNdyyhdmdy+-.---:/oosssssso+/:---oMMMMNmyoyddyhdhyydmmmmmmmmmmmmmmmmmm
+echo yyyyyhdhyyhhhhhdmdhhdhdmNysydmmNNmNNdhmmdho:..--://+oooo+/:--.-mMNMMMNmyoohdysydysydNNmNNmmmmmmmmmmm
+echo yyyyssyhdhhyyhhyydmNNNmddhysoydmNdmmdhhmmddhs:..--:://///:---.+MMNNNMMNdhyoshhshdhyydNNNNmmmmmmmmmmm
+echo ddddhhhyyhhhhyyhyyshdNMMNmdhhhsooosshdddmNdddds:-----::::----:dMMNNNMMMNmhsosyyssmdyshmmmmmmdddddddd
+echo MMMMNNmmdddddhhhyyyyydmNNMMNmddyyso+osdmmdNmyhdds/::::---::::sMMMNNNNNMMNmhsossssdmmhyyhdmmddddddddh
+echo mNMMMMMMMNNmmdhyyssyyhhdmNMMMMNNdddys++ohddmmmmhhho:::::///:/NMMMMNNNNMMMNhhooyoyNNmdhyosmmmmmdddddd
+echo hhhdmNMMMMMMMMNNmdhysyhhdmNNNMNNNNNNmdhsooosmMdhhhdh+/+o+/::hMMMMMNNNNNNMMhyysssohhyyyhyyh+ydmNmmmmm
+echo ysysshdmNNMMMMMMMMMMNddddmmmNNMMMNNNMNNNNmhdyhdmdyyhhy/:::-omMMMMMNNNNNNMMhysoohsyyosyyyysssoohmNNNm
+echo yyyyyyyhhddNNMMMMMMNNNNNmmmmNNNMMMNNNNNNNNmNNmddhhhyyhy+--/ymMMMMMNNNmmNNMdssssysNhhhysyshdNdsooymNN
+echo yyyyyyyyyhhhdmNNNMMMNNMNNNNNNNNNNMNNNNNNNMNNMMNNNddmhyhhs/oydMMMMMNNNNmNNNyyyssydmhyyoshdddmhsssoosd
+
+TIMEOUT /T 2
 mode con:cols=80 lines=30
-
-
 node bot.js

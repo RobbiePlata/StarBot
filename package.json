@@ -1,0 +1,14 @@
+{
+  "name": "sunnybot",
+  "version": "1.0.0",
+  "description": "Twitch Bot",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Robert Plata",
+  "license": "ISC",
+  "dependencies": {
+    "tmi.js": "^1.3.1"
+  }
+}

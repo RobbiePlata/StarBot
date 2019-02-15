@@ -1,19 +1,32 @@
 ﻿/*
 Install Node JS ('install this')
+In cmd npm install node-fetch --save
+In cmd npm install twitch-api-v5 --save
 Fill in apikey, botusername, and channelname fields
-Go to twitchapps.com/tmi to connect with twitch, paste naked key inside the double quotes
+Go to twitchapps.com/tmi to connect your BOT with twitch, paste naked key inside the double quotes
 Run 'run.batch' in file explorer
 */
 
-var tmi = require('tmi.js');
-apikey = "";
-botusername = "OcularPatdownBot";
-channelname = "ROOTRob";
+tmi = require('tmi.js');
+twitchClient = require('twitch').default;
+fs = require('fs');
+var readline = require('readline-sync');
+
+apikey = getBotAPI();
+botusername = getBotUsername();
+channelname = getChannelName();
+
+var clientid = fs.readFileSync('./clientid.txt','utf8');
+const accessToken = getAccessToken(clientid);
+twitchClient = twitchClient.withCredentials(clientid, accessToken);
+
+
 
 // require json directories
 var commandsJson = require("./commands.json");
 var banmessagesJson = require("./banmessages.json");
 var submessagesJson = require("./submessages.json");
+
 
 // Twitch Information
 var options = {
@@ -25,10 +38,149 @@ var options = {
     },
     identity: {
         username: botusername,
-        password: apikey
+        password: apikey    
     },
     channels: [channelname]
 };
+
+function writeToFile(filepath, data){
+    fs.writeFile(filepath, data, function(err) {
+        if(err) {
+            return console.log(err);
+        }
+        console.log("The file was saved!");
+    }); 
+}
+console.log("clientid: " + clientid);
+console.log("apikey: " + apikey);
+console.log("Access token: " + accessToken);
+
+// Get botusername
+function getBotUsername(){
+    var botusername = fs.readFileSync('./botusername.txt','utf8');
+    if(botusername !== ""){
+        return botusername;
+    }
+    else{
+        bot = readline.question("What is your bot's twitch username?");
+        fs.writeFileSync("./botusername.txt", bot, function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            console.log("Key saved");
+            }); 
+            try{
+                return bot = fs.readFileSync('./botusername.txt','utf8');
+            }catch(err){
+                console.log(err);
+            }
+    }
+}
+
+// Get user access token
+function getAccessToken(){
+    var token = fs.readFileSync('./accesstoken.txt','utf8');
+    // Token is present
+    if(token !== ""){
+        return token;
+    }
+    // Token is not present
+    else{
+        userTokenRetreival(); // Open browser for user to enter token
+        writeAccessToken(); // Write access token to accesstoken.txt
+            try{
+                return token = fs.readFileSync('./accesstoken.txt','utf8');
+            }catch(err){
+                console.log(err);
+            }
+        }
+}
+
+function getChannelName(){
+    var channelname = fs.readFileSync('./channelname.txt','utf8');
+    if(channelname !== ""){
+        return channelname;
+    }
+    else{
+        name = readline.question("What is your stream channel?");
+        fs.writeFileSync("./channelname.txt", name, function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            console.log("name saved");
+            }); 
+            try{
+                return bot = fs.readFileSync('./channelname.txt','utf8');
+            }catch(err){
+                console.log(err);
+            }
+    }
+
+}
+
+function botAPIRetreival(){
+    var opn = require('opn');
+        opn("https://twitchapps.com/tmi", {
+        app: 'Chrome',
+        wait: true
+    }).then(function(cp) {
+        //console.log('child process:',cp);
+        //console.log('worked');
+    }).catch(function(err) {
+        //console.error(err);
+    });
+}
+
+function getBotAPI(){
+    var botapi = fs.readFileSync('./botapi.txt','utf8');
+    if(botapi !== ""){
+        return botapi;
+    }
+    else{
+        botAPIRetreival();
+        console.log("A window as been launched to retreive your key");
+        api = readline.question("What is your bot's key?");
+        fs.writeFileSync("./botapi.txt", api, function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            console.log("Key saved");
+            }); 
+            try{
+                return bot = fs.readFileSync('./botapi.txt','utf8');
+            }catch(err){
+                console.log(err);
+            }
+    }
+
+}
+
+function userTokenRetreival(){
+    var opn = require('opn');
+        opn("https://twitchtokengenerator.com/", {
+        app: 'Chrome',
+        wait: true
+    }).then(function(cp) {
+        //console.log('child process:',cp);
+        //console.log('worked');
+    }).catch(function(err) {
+        //console.error(err);
+    });
+}
+function writeAccessToken(){
+    var key = readline.question("What is main channel's authentication key?");
+    fs.writeFileSync("./accesstoken.txt", key, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+    console.log("Key saved");
+    }); 
+}
+
+// Is twitch information in file
+function checkInfo(){
+    // If apikey and accesstoken valid, return true
+}
 
 // If bot alive
 var alive = true;
@@ -78,6 +230,7 @@ client.on("ban", (channel, username, reason) => {
 
 // Commands
 client.on('chat', function(channel, user, message, self){
+    
     // Respond to user command using commands.json
     if(commandsJson.hasOwnProperty(message)){
         try{
@@ -176,6 +329,11 @@ client.on('chat', function(channel, user, message, self){
         else{
             client.action(channelname, "Nice try");
         }
+    }
+    
+    // Respond with Starcraft II opponent of streamer
+    if(strArray[0] === ("!opponent")){
+        // client.action(channelname, opponent string);
     }
 
     // Bot kill

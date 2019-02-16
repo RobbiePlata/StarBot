@@ -135,7 +135,7 @@ function getBotAPI(){
     else{
         botAPIRetreival();
         console.log("A window as been launched to retreive your key");
-        api = readline.question("What is your bot's key?");
+        api = readline.question("What is your bot's oath key?");
         fs.writeFileSync("./botapi.txt", api, function(err) {
             if(err) {
                 return console.log(err);

@@ -1,5 +1,5 @@
 {
-  "name": "sunnybot",
+  "name": "OcularPatdownBot",
   "version": "1.0.0",
   "description": "Twitch Bot",
   "main": "bot.js",

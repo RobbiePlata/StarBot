@@ -1,17 +1,15 @@
-﻿/*
-Install Node JS ('install this')
-Run 'run.batch' in file explorer
-*/
-
+﻿// Dependencies
 tmi = require('tmi.js');
 twitchClient = require('twitch').default;
 fs = require('fs');
 var readline = require('readline-sync');
 
+// twitch-tmi information
 apikey = getBotAPI();
 botusername = getBotUsername();
 channelname = getChannelName();
 
+// twitch-api information
 var clientid = fs.readFileSync('./clientid.txt','utf8');
 const accessToken = getAccessToken(clientid);
 twitchClient = twitchClient.withCredentials(clientid, accessToken);
@@ -40,7 +38,7 @@ var options = {
     channels: [channelname]
 };
 
-// Write 
+// Write out data to path
 function writeToFile(filepath, data){
     fs.writeFile(filepath, data, function(err) {
         if(err) {
@@ -50,7 +48,7 @@ function writeToFile(filepath, data){
     }); 
 }
 
-// Get botusername
+// If botusername is empty, ask user for bot username and write to file
 function getBotUsername(){
     var botusername = fs.readFileSync('./botusername.txt','utf8');
     if(botusername !== ""){
@@ -91,6 +89,7 @@ function getAccessToken(){
         }
 }
 
+// If channelname is empty, ask user for channelname & write channelname to file
 function getChannelName(){
     var channelname = fs.readFileSync('./channelname.txt','utf8');
     if(channelname !== ""){
@@ -113,8 +112,8 @@ function getChannelName(){
 
 }
 
-
-function botAPIRetreival(){
+// Open chrome browser for user api confirmation and retrieval
+function botAPIRetrieval(){
     var opn = require('opn');
         opn("https://twitchapps.com/tmi", {
         app: 'Chrome',
@@ -127,14 +126,15 @@ function botAPIRetreival(){
     });
 }
 
+// If botapi is empty, ask user for prompt user for bot api and write to file
 function getBotAPI(){
     var botapi = fs.readFileSync('./botapi.txt','utf8');
     if(botapi !== ""){
         return botapi;
     }
     else{
-        botAPIRetreival();
-        console.log("A window as been launched to retreive your key");
+        botAPIRetrieval();
+        console.log("A window as been launched to retrieve your key");
         api = readline.question("What is your bot's oath key?");
         fs.writeFileSync("./botapi.txt", api, function(err) {
             if(err) {
@@ -151,6 +151,7 @@ function getBotAPI(){
 
 }
 
+// Open chrome browser for authentication token retrieval
 function userTokenRetreival(){
     var opn = require('opn');
         opn("https://twitchtokengenerator.com/", {
@@ -163,6 +164,8 @@ function userTokenRetreival(){
         //console.error(err);
     });
 }
+
+// Write authentication token to file
 function writeAccessToken(){
     var key = readline.question("What is main channel's authentication key?");
     fs.writeFileSync("./accesstoken.txt", key, function(err) {
@@ -172,9 +175,6 @@ function writeAccessToken(){
     console.log("Key saved");
     }); 
 }
-
-// If bot alive
-var alive = true;
 
 // Connect to channel
 var client = new tmi.client(options);

@@ -1,6 +1,12 @@
 # Ignore text files
 *.txt
 
+# Ignore .gitignore
+*.gitignore
+
+# Ignore .gitattributes
+*.gitattributes
+
 # Logs
 logs
 *.log

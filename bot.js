@@ -1,9 +1,5 @@
 ﻿/*
 Install Node JS ('install this')
-In cmd npm install node-fetch --save
-In cmd npm install twitch-api-v5 --save
-Fill in apikey, botusername, and channelname fields
-Go to twitchapps.com/tmi to connect your BOT with twitch, paste naked key inside the double quotes
 Run 'run.batch' in file explorer
 */
 
@@ -20,13 +16,14 @@ var clientid = fs.readFileSync('./clientid.txt','utf8');
 const accessToken = getAccessToken(clientid);
 twitchClient = twitchClient.withCredentials(clientid, accessToken);
 
-
+console.log("clientid: " + clientid);
+console.log("apikey: " + apikey);
+console.log("Access token: " + accessToken);
 
 // require json directories
 var commandsJson = require("./commands.json");
 var banmessagesJson = require("./banmessages.json");
 var submessagesJson = require("./submessages.json");
-
 
 // Twitch Information
 var options = {
@@ -43,6 +40,7 @@ var options = {
     channels: [channelname]
 };
 
+// Write 
 function writeToFile(filepath, data){
     fs.writeFile(filepath, data, function(err) {
         if(err) {
@@ -51,9 +49,6 @@ function writeToFile(filepath, data){
         console.log("The file was saved!");
     }); 
 }
-console.log("clientid: " + clientid);
-console.log("apikey: " + apikey);
-console.log("Access token: " + accessToken);
 
 // Get botusername
 function getBotUsername(){
@@ -118,6 +113,7 @@ function getChannelName(){
 
 }
 
+
 function botAPIRetreival(){
     var opn = require('opn');
         opn("https://twitchapps.com/tmi", {
@@ -175,11 +171,6 @@ function writeAccessToken(){
     }
     console.log("Key saved");
     }); 
-}
-
-// Is twitch information in file
-function checkInfo(){
-    // If apikey and accesstoken valid, return true
 }
 
 // If bot alive
@@ -254,28 +245,27 @@ client.on('chat', function(channel, user, message, self){
 
     }
 
-    // Add command to commands.json work on integrating all text after index 2
+    // Add command to commands.json
     if(strArray[0] === ("!add")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
             console.log(strArray);
-            if (strArray.length < 3 || strArray.length > 3){
-                console.log("To add a command, type \"!add !command response\"");
+            if (strArray.length < 3){
+                client.action(channelname, "Command format: \"!add !command message\"");
             }
-            if (strArray.length === 3){
-                if (strArray[1].charAt(0) == "!"){
-                    var json = constructJson(strArray[1], strArray[2]);
-                    var fs = require('fs');
-                    fs.writeFile("./commands.json", json, finished);
-                    function finished(error){
-                        console.log("Command added");
-                    }
+            else if (strArray[1].charAt(0) == "!"){
+                var sentenceArray = strArray.slice(); // Clone array
+                sentenceArray.shift();
+                sentenceArray.shift();
+                console.log(sentenceArray);
+                var json = constructJson(strArray[1], sentenceArray.join(" ").toString());
+                var fs = require('fs');
+                fs.writeFile("./commands.json", json, finished);
+                function finished(error){
+                    console.log("Command added");
                 }
-                else{
-                    client.action(channelname, "Use an exclamation point for your command");
-                }
-            }  
+            }
             else{
-                client.action(channelname, "To add a command, type \"!add !command response\"");
+                client.action(channelname, "Use an exclamation point for your command");
             }
         }
         else{
@@ -283,7 +273,7 @@ client.on('chat', function(channel, user, message, self){
         }
     }
 
-    // Remove command from commands.json GOOD
+    // Remove command from commands.json GOOD NOT FINISHED
     if(strArray[0] === ("!remove")){
         if(user.username === channelname.user || user.username === channelname.toLowerCase()){
             if(strArray.length < 2 || strArray.length > 2){
@@ -298,7 +288,7 @@ client.on('chat', function(channel, user, message, self){
         }
     }
     
-    // Add sub message to submessages.json
+    // Add sub message to submessages.json NOT FINISHED
     if(strArray[0] === ("!addsubmessage")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
             
@@ -314,7 +304,7 @@ client.on('chat', function(channel, user, message, self){
         }
     }
 
-    // Add user ban message
+    // Add user ban message NOT FINISHED
     if(strArray[0] === ("!addbanmessage")){
         if(user.username === channelname.user || user.username === channelname.toLowerCase()){
             messageMinusExclamation = message.replace('/!/g','');
@@ -331,27 +321,26 @@ client.on('chat', function(channel, user, message, self){
         }
     }
     
-    // Respond with Starcraft II opponent of streamer
+    // Respond with Starcraft II opponent of streamer NOT FINISHED
     if(strArray[0] === ("!opponent")){
         // client.action(channelname, opponent string);
     }
 
-    // Bot kill
+    // Bot kill NOT FINISHED
     if(strArray[0] === ("!off")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
             client.action(channelname, "I'll just regress, because I feel I've made myself perfectly redundant");
-            on = false;
         }
     }
 
-    // Bot alive
+    // Bot alive NOT FINISHED
     if(strArray[0] === ("!on")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
             client.action(channelname, "A CROOKED COP! YEAH I GET IT! EVERYONES A CROOKED COP HUH? AM I THE ONLY COP LEFT IN PHILADELPHIA WHO AIN'T CROOKED?!");
-            alive = false;
         }
     }
 
+    // Return stringified json entry
     function constructJson(jsonKey, jsonValue){
         commandsJson[jsonKey] = jsonValue;
         var stringifyJson = JSON.stringify(commandsJson, null, 4);
@@ -359,5 +348,4 @@ client.on('chat', function(channel, user, message, self){
         return stringifyJson;
     }
 
-    
 });

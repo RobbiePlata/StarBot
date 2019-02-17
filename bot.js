@@ -185,13 +185,65 @@ async function isStreamLive(userName) {
 	return await user.getStream() !== null;
 }
 
-// Currently Promise { <pending> }
-console.log(isStreamLive(channelname));
+// Get uptime using the current time minus the startDate of stream (in milliseconds) then convert to standard time form
+async function getUpTime(){
+    if (await isStreamLive(channelname)){
+        const user = await twitchClient.users.getUserByName(channelname);
+        const stream = await user.getStream();
+        var start = stream.startDate; // Start date
+        var currentTime = new Date(); // Current time
+        msdifference = (currentTime - start); // Difference
+        console.log(convertUptime(msdifference)); 
+        // TODO: Retrieve convertUptime object and post to twitch chat using command !uptime
+    }
+    else{
+        client.action(channelname, "Stream is not live");
+    }
+}
+
+function convertUptime(milliseconds) {
+    var day, hour, minutes, seconds;
+    seconds = Math.floor(milliseconds / 1000);
+    minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+    hour = Math.floor(minutes / 60);
+    minutes = minutes % 60;
+    day = Math.floor(hour / 24);
+    hour = hour % 24;
+    if(day < 1 && hour > 0){
+        return {
+            hour: hour,
+            minutes: minutes,
+            seconds: seconds
+        }
+    }
+    if(day < 1 && hour < 1){
+        return {
+            minutes: minutes,
+            seconds: seconds
+        }
+    }
+    if(day < 1 && hour < 1 && minutes < 1){
+        return {
+            seconds: seconds
+        }
+    }
+    else{
+        return {
+            day: day,
+            hour: hour,
+            minutes: minutes,
+            seconds: seconds
+        }
+    };
+}
+
+// Debug
 
 // Connect to channel
 var client = new tmi.client(options);
 
-client.connect(channelname);
+client.connect(channelname); 
 
 //client.on('ping', () => console.log('[PING] Received ping.'));
 function printCommands(json){
@@ -254,6 +306,11 @@ client.on('chat', function(channel, user, message, self){
     // Change Welcome
     if(strArray[0] === ("!welcome")){
 
+    }
+
+    // Get Uptime
+    if(strArray[0] === ("!uptime")){
+        getUpTime(); // TODO get object and post uptime to chat
     }
 
     // Add command to commands.json

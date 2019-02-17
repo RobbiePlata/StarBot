@@ -176,13 +176,24 @@ function writeAccessToken(){
     }); 
 }
 
+// Check if stream is live
+async function isStreamLive(userName) {
+	const user = await twitchClient.users.getUserByName(userName);
+	if (!user) {
+		return false;
+	}
+	return await user.getStream() !== null;
+}
+
+// Currently Promise { <pending> }
+console.log(isStreamLive(channelname));
+
 // Connect to channel
 var client = new tmi.client(options);
 
-client.connect();
+client.connect(channelname);
 
 //client.on('ping', () => console.log('[PING] Received ping.'));
-
 function printCommands(json){
     console.log("Current Commands: \n");
     Object.keys(json).forEach(function(key) {

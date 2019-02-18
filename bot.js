@@ -22,6 +22,7 @@ console.log("Access token: " + accessToken);
 var commandsJson = require("./commands.json");
 var banmessagesJson = require("./banmessages.json");
 var submessagesJson = require("./submessages.json");
+var messages = require("./messages.json");
 
 // Twitch Information
 var options = {
@@ -37,6 +38,17 @@ var options = {
     },
     channels: [channelname]
 };
+
+// 15 minutes = 900000
+var messageInterval = {
+    time: 900000,
+    get interval(){
+        return messageInterval.time;
+    },
+    set interval(value) {
+      this.time = value * 60000;
+    }
+  };
 
 // Write out data to path
 function writeToFile(filepath, data){
@@ -238,6 +250,7 @@ function convertUptime(milliseconds) {
     };
 }
 
+
 // Debug
 
 // Connect to channel
@@ -281,6 +294,15 @@ client.on("subscription", (channel, username, method, message, userstate) => {
 client.on("ban", (channel, username, reason) => {
     client.action(channelname, "\"" + username + " Dies (Part 1)\"")
 });
+
+
+// Message every set interval
+setInterval(() => {
+    var r = Math.floor(Math.random() * Object.keys(messages).length);
+    client.action(channelname, messages[r]);
+}, messageInterval.interval); 
+
+
 
 // Commands
 client.on('chat', function(channel, user, message, self){

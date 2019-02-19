@@ -255,16 +255,18 @@ client.connect(channelname);
 
 //client.on('ping', () => console.log('[PING] Received ping.'));
 function printCommands(json){
-    console.log("Current Commands: \n");
+    console.log("\nCurrent Commands:");
+    console.log("\nOnly " + channelname + " has edit authority in chat:");
+    console.log("!Welcome to change welcome message");
+    console.log("!add !command message");
+    console.log("!remove !command");
+    console.log("!addsubmessage message");
+    console.log("!addbanmessage message");
+    console.log("!uptime");
+    console.log("");
     Object.keys(json).forEach(function(key) {
         console.log(key + ': ' + json[key])
     })
-    console.log("\nOnly + " + channelname + " has edit authority in chat:");
-    console.log("!Welcome to change welcome message");
-    console.log("To add commands !add !command message");
-    console.log("To remove commands !remove !command");
-    console.log("To add sub message, !addsubmessage message");
-    console.log("To add ban message !addbanmessage message");
 };
 
 // Welcome Message
@@ -304,6 +306,7 @@ client.on("subscription", (channel, username, method, message, userstate) => {
         }
     }
     strArrayMessage = strArrayMessage.join(" ");
+    client.action(channelname, strArrayMessage);
 });
 
 // Resub
@@ -324,6 +327,7 @@ client.on("resub", function (channel, username, months, message) {
         }
     }
     strArrayMessage = strArrayMessage.join(" ");
+    client.action(channelname, strArrayMessage);
 });
 
 // Ban
@@ -344,8 +348,7 @@ client.on("ban", (channel, username, reason) => {
         }
     }
     strArrayMessage = strArrayMessage.join(" ");
-    client.action(channelname, strArrayMessage)
-    
+    client.action(channelname, strArrayMessage);    
 });
 
 // Commands

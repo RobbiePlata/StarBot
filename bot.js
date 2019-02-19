@@ -22,7 +22,7 @@ console.log("Access token: " + accessToken);
 var commandsJson = require("./commands.json");
 var banmessagesJson = require("./banmessages.json");
 var submessagesJson = require("./submessages.json");
-var messages = require("./messages.json");
+var messagesJson = require("./messages.json");
 
 // Twitch Information
 var options = {
@@ -270,7 +270,7 @@ function printCommands(json){
 // Welcome Message
 client.on('connected', function(address, port) {
     console.log("Welcome " + channelname + ", " + botusername + " is online!\n");
-    client.action(channelname, "\"Hey asshole\"");
+    client.action(channelname, "o7 Captain");
     printCommands(commandsJson);
     
 });
@@ -278,7 +278,7 @@ client.on('connected', function(address, port) {
 // Message every set interval
 setInterval(() => {
     var r = Math.floor(Math.random() * Object.keys(messages).length);
-    client.action(channelname, messages[r]);
+    client.action(channelname, messagesJson[r]);
 }, messageInterval.interval); 
 
 // Hosted
@@ -288,17 +288,20 @@ client.on("hosted", (channel, username, viewers, autohost) => {
 
 // Subscription
 client.on("subscription", (channel, username, method, message, userstate) => {
-    client.action(channelname, "\"Hey-o! What’s up, bitches!\"")
+    var random = Math.floor(Math.random() * Object.keys(submessagesJson).length);
+    client.action(channelname, submessagesJson[random])
 });
 
 // Resub
 client.on("resub", function (channel, username, months, message) {
-    client.action(channelname, "\"Hey-o! What’s up, bitches!\"")
+    var random = Math.floor(Math.random() * Object.keys(submessagesJson).length);
+    client.action(channelname, submessagesJson[random])
 });
 
 // Ban
 client.on("ban", (channel, username, reason) => {
-    client.action(channelname, "\"" + username + " Dies (Part 1)\"")
+    var random = Math.floor(Math.random() * Object.keys(banmessagesJson).length);
+    client.action(channelname, banmessagesJson[random])
 });
 
 // Commands
@@ -320,11 +323,6 @@ client.on('chat', function(channel, user, message, self){
         console.log(strArray.length);
     }catch(err){
         console.log(err);
-    }
-
-    // Change Welcome
-    if(strArray[0] === ("!welcome")){
-
     }
 
     // Get Uptime

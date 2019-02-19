@@ -206,13 +206,29 @@ async function getUpTime(){
         var currentTime = new Date(); // Current time
         msdifference = (currentTime - start); // Difference
         console.log(convertUptime(msdifference)); 
-        // TODO: Retrieve convertUptime object and post to twitch chat using command !uptime
+        output = convertUptime(msdifference);
+        if(output.day === 0 && output.hour === 0 && output.minutes === 0){
+            client.action(channelname, channelname + " has been live for " + output.seconds + " seconds");
+        }
+        else if(output.day === 0 && output.hour === 0){
+            client.action(channelname, channelname + " has been live for " + output.minutes + " minutes " + output.seconds + " seconds");
+        }
+        else if(output.day === 0){
+            client.action(channelname, channelname + " has been live for " + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
+        }
+        else if(output.day === 1){
+            client.action(channelname, channelname + " has been live for " + output.day + " day " + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
+        }
+        else{
+            client.action(channelname, channelname + " has been live for " + output.day + " days" + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
+        }
     }
     else{
         client.action(channelname, "Stream is not live");
     }
 }
 
+// Convert milliseconds into uptime literal
 function convertUptime(milliseconds) {
     var day, hour, minutes, seconds;
     seconds = Math.floor(milliseconds / 1000);
@@ -222,34 +238,13 @@ function convertUptime(milliseconds) {
     minutes = minutes % 60;
     day = Math.floor(hour / 24);
     hour = hour % 24;
-    if(day < 1 && hour > 0){
-        return {
-            hour: hour,
-            minutes: minutes,
-            seconds: seconds
-        }
-    }
-    if(day < 1 && hour < 1){
-        return {
-            minutes: minutes,
-            seconds: seconds
-        }
-    }
-    if(day < 1 && hour < 1 && minutes < 1){
-        return {
-            seconds: seconds
-        }
-    }
-    else{
-        return {
-            day: day,
-            hour: hour,
-            minutes: minutes,
-            seconds: seconds
-        }
+    return {
+        day: day,
+        hour: hour,
+        minutes: minutes,
+        seconds: seconds
     };
 }
-
 
 // Debug
 
@@ -280,6 +275,12 @@ client.on('connected', function(address, port) {
     
 });
 
+// Message every set interval
+setInterval(() => {
+    var r = Math.floor(Math.random() * Object.keys(messages).length);
+    client.action(channelname, messages[r]);
+}, messageInterval.interval); 
+
 // Hosted
 client.on("hosted", (channel, username, viewers, autohost) => {
     client.action(channelname, "\"IM CULTIVATING MASS\"")
@@ -290,19 +291,15 @@ client.on("subscription", (channel, username, method, message, userstate) => {
     client.action(channelname, "\"Hey-o! What’s up, bitches!\"")
 });
 
+// Resub
+client.on("resub", function (channel, username, months, message) {
+    client.action(channelname, "\"Hey-o! What’s up, bitches!\"")
+});
+
 // Ban
 client.on("ban", (channel, username, reason) => {
     client.action(channelname, "\"" + username + " Dies (Part 1)\"")
 });
-
-
-// Message every set interval
-setInterval(() => {
-    var r = Math.floor(Math.random() * Object.keys(messages).length);
-    client.action(channelname, messages[r]);
-}, messageInterval.interval); 
-
-
 
 // Commands
 client.on('chat', function(channel, user, message, self){

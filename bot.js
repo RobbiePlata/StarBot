@@ -301,7 +301,23 @@ client.on("resub", function (channel, username, months, message) {
 // Ban
 client.on("ban", (channel, username, reason) => {
     var random = Math.floor(Math.random() * Object.keys(banmessagesJson).length);
-    client.action(channelname, banmessagesJson[random])
+    var message = banmessagesJson[random];
+    strArrayMessage = message.split(" ");
+    console.log(strArrayMessage);
+    for(index = 0; index < strArrayMessage.length; index ++){
+        console.log(strArrayMessage[index]);
+        if(strArrayMessage[index] == "user"){
+            strArrayMessage[index] = strArrayMessage[index].replace("user", username);
+            console.log(strArrayMessage[index]);
+        }
+        else{
+            index = index + 1;
+            console.log(index);
+        }
+    }
+    strArrayMessage = strArrayMessage.join(" ");
+    client.action(channelname, strArrayMessage)
+    
 });
 
 // Commands
@@ -353,11 +369,11 @@ client.on('chat', function(channel, user, message, self){
             }
         }
         else{
-            client.action(channelname, "\"You can't tell me what to do mate\"");
+            client.action(channelname, "You can't tell me what to do");
         }
     }
 
-    // Remove command from commands.json GOOD NOT FINISHED
+    // Remove command from commands.json
     if(strArray[0] === ("!remove")){
         if(user.username === channelname.user || user.username === channelname.toLowerCase()){
             if(strArray.length < 2 || strArray.length > 2){
@@ -378,7 +394,7 @@ client.on('chat', function(channel, user, message, self){
             }
         }
         else{
-            client.action(channelname, "Nice try mate");
+            client.action(channelname, "You can't tell me what to do");
         }
     }
     
@@ -394,7 +410,7 @@ client.on('chat', function(channel, user, message, self){
             }   
         }
         else{
-            client.action(channelname, "Nice try");
+            client.action(channelname, "You can't tell me what to do");
         }
     }
 

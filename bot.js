@@ -289,13 +289,41 @@ client.on("hosted", (channel, username, viewers, autohost) => {
 // Subscription
 client.on("subscription", (channel, username, method, message, userstate) => {
     var random = Math.floor(Math.random() * Object.keys(submessagesJson).length);
-    client.action(channelname, submessagesJson[random])
+    var message = submessagesJson[random];
+    strArrayMessage = message.split(" ");
+    console.log(strArrayMessage);
+    for(index = 0; index < strArrayMessage.length; index ++){
+        console.log(strArrayMessage[index]);
+        if(strArrayMessage[index] == "user"){
+            strArrayMessage[index] = strArrayMessage[index].replace("user", username);
+            console.log(strArrayMessage[index]);
+        }
+        else{
+            index = index + 1;
+            console.log(index);
+        }
+    }
+    strArrayMessage = strArrayMessage.join(" ");
 });
 
 // Resub
 client.on("resub", function (channel, username, months, message) {
     var random = Math.floor(Math.random() * Object.keys(submessagesJson).length);
-    client.action(channelname, submessagesJson[random])
+    var message = submessagesJson[random];
+    strArrayMessage = message.split(" ");
+    console.log(strArrayMessage);
+    for(index = 0; index < strArrayMessage.length; index ++){
+        console.log(strArrayMessage[index]);
+        if(strArrayMessage[index] == "user"){
+            strArrayMessage[index] = strArrayMessage[index].replace("user", username);
+            console.log(strArrayMessage[index]);
+        }
+        else{
+            index = index + 1;
+            console.log(index);
+        }
+    }
+    strArrayMessage = strArrayMessage.join(" ");
 });
 
 // Ban

@@ -348,18 +348,17 @@ client.on('chat', function(channel, user, message, self){
                 sentenceArray.shift();
                 console.log(sentenceArray);
                 var json = constructJson(strArray[1], sentenceArray.join(" ").toString());
-                var fs = require('fs');
-                fs.writeFile("./commands.json", json, finished);
+                fs.writeFileSync("./commands.json", json, finished());
                 function finished(error){
-                    console.log("Command added");
+                    client.action(channelname, "command " + strArray[1] +" added");
                 }
             }
             else{
-                client.action(channelname, "Use an exclamation point for your command");
+                client.action(channelname, "Use an exclamation point at the start of the command you want to add");
             }
         }
         else{
-            client.action(channelname, "\"You can't tell me what to do jabroni\"");
+            client.action(channelname, "\"You can't tell me what to do mate\"");
         }
     }
 
@@ -370,11 +369,21 @@ client.on('chat', function(channel, user, message, self){
                 client.action(channelname, "To remove a command, type \"!remove\"");
             }
             if(strArray.length === 2){
-                client.action(channelname, "command " + strArray[1] +" removed");
+                if(strArray[1].charAt(0) == "!"){
+                    delete commandsJson[strArray[1]];
+                    strJson = JSON.stringify(commandsJson, null, 4);
+                    fs.writeFileSync("./commands.json", strJson, finished());
+                    function finished(error){
+                        client.action(channelname, "command " + strArray[1] +" removed");
+                    }
+                }
+                else{
+                    client.action(channelname, "Use an exclamation point at the start of the command you want to remove");
+                }
             }
         }
         else{
-            client.action(channelname, "Nice try jabroni");
+            client.action(channelname, "Nice try mate");
         }
     }
     

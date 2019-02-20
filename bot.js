@@ -257,11 +257,11 @@ client.connect(channelname);
 function printCommands(json){
     console.log("\nCurrent Commands:");
     console.log("\nOnly " + channelname + " has edit authority in chat:");
-    console.log("!Welcome to change welcome message");
     console.log("!add !command message");
     console.log("!remove !command");
-    console.log("!addsubmessage message");
-    console.log("!addbanmessage message");
+    console.log("!addmessage message")
+    console.log("!addsub message");
+    console.log("!addban message");
     console.log("!uptime");
     console.log("");
     Object.keys(json).forEach(function(key) {
@@ -277,10 +277,19 @@ client.on('connected', function(address, port) {
     
 });
 
-// Message every set interval
+// Cycle through messages every set interval
+count = Math.floor(Math.random() * Object.keys(messagesJson).length); // Start count on a random number (So first message is random)
 setInterval(() => {
-    var r = Math.floor(Math.random() * Object.keys(messages).length);
-    client.action(channelname, messagesJson[r]);
+    messages = require('./messages.json'); // (Allow newly added commands to be recognized every interval)
+    if(count <= Object.keys(messages).length - 1){
+        client.action(channelname, messagesJson[count]);
+    }
+    else{
+        count = 0;
+        client.action(channelname, messagesJson[count]);
+    }
+    console.log(count);
+    count = count + 1;
 }, messageInterval.interval); 
 
 // Hosted
@@ -430,14 +439,22 @@ client.on('chat', function(channel, user, message, self){
     }
     
     // Add sub message to submessages.json NOT FINISHED
-    if(strArray[0] === ("!addsubmessage")){
+    if(strArray[0] === ("!addsub")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
-            
-            if (strArray.length < 2 || strArray.length > 3){
-                client.action(channelname, "To add a command, type \"!addsubmessage\"");
+            if (strArray.length < 2){
+                client.action(channelname, "To add a sub message type \"!addsub message here\"");
             }
-            if (strArray.length === 3){
-                client.action(channelname, "!" + strArray[1] + " submessage added!");
+            else if (strArray.length >= 2){
+                var sentenceArray = strArray.slice(); // Clone array
+                sentenceArray.shift();
+                keyvalue = Object.keys(submessagesJson).length;
+                submessagesJson[keyvalue] = sentenceArray.join(" ");
+                strJson = JSON.stringify(submessagesJson, null, 4);
+                console.log("object size: " + keyvalue);
+                fs.writeFileSync("./submessages.json", strJson, finished());
+                function finished(error){
+                    client.action(channelname, sentenceArray.join(" ") + " submessage added!");
+                }
             }   
         }
         else{
@@ -446,19 +463,50 @@ client.on('chat', function(channel, user, message, self){
     }
 
     // Add user ban message NOT FINISHED
-    if(strArray[0] === ("!addbanmessage")){
-        if(user.username === channelname.user || user.username === channelname.toLowerCase()){
-            messageMinusExclamation = message.replace('/!/g','');
-            var strArray = messageMinusExclamation.split(" ");
-            if(strArray.length < 2 || strArray.length > 2){
-                client.action(channelname, "To add a ban message, type \"!addbanmessage\"");
+    if(strArray[0] === ("!addban")){
+        if(user.username === channelname || user.username === channelname.toLowerCase()){
+            if (strArray.length < 2){
+                client.action(channelname, "To add a ban message type \"!addban message here\"");
             }
-            if(strArray.length === 2){
-                client.action(channelname, strArray[1] + " has been added as as a ban message");
-            }
+            else if (strArray.length >= 2){
+                var sentenceArray = strArray.slice(); // Clone array
+                sentenceArray.shift();
+                keyvalue = Object.keys(banmessagesJson).length;
+                banmessagesJson[keyvalue] = sentenceArray.join(" ");
+                strJson = JSON.stringify(banmessagesJson, null, 4);
+                console.log("object size: " + keyvalue);
+                fs.writeFileSync("./banmessages.json", strJson, finished());
+                function finished(error){
+                    client.action(channelname, sentenceArray.join(" ") + " submessage added!");
+                }
+            }   
         }
         else{
-            client.action(channelname, "Nice try");
+            client.action(channelname, "You can't tell me what to do");
+        }
+    }
+
+    // Add message that appears every messageInterval
+    if(strArray[0] === ("!addmessage")){
+        if(user.username === channelname || user.username === channelname.toLowerCase()){
+            if (strArray.length < 2){
+                client.action(channelname, "To add a message type \"!addmessage message here\"");
+            }
+            else if (strArray.length >= 2){
+                var sentenceArray = strArray.slice(); // Clone array
+                sentenceArray.shift();
+                keyvalue = Object.keys(messagesJson).length;
+                messagesJson[keyvalue] = sentenceArray.join(" ");
+                strJson = JSON.stringify(messagesJson, null, 4);
+                console.log("object size: " + keyvalue);
+                fs.writeFileSync("./messages.json", strJson, finished());
+                function finished(error){
+                    client.action(channelname, sentenceArray.join(" ") + " message added!");
+                }
+            }   
+        }
+        else{
+            client.action(channelname, "You can't tell me what to do");
         }
     }
     
@@ -468,16 +516,9 @@ client.on('chat', function(channel, user, message, self){
     }
 
     // Bot kill NOT FINISHED
-    if(strArray[0] === ("!off")){
+    if(strArray[0] === ("!bye")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
-            client.action(channelname, "I'll just regress, because I feel I've made myself perfectly redundant");
-        }
-    }
-
-    // Bot alive NOT FINISHED
-    if(strArray[0] === ("!on")){
-        if(user.username === channelname || user.username === channelname.toLowerCase()){
-            client.action(channelname, "A CROOKED COP! YEAH I GET IT! EVERYONES A CROOKED COP HUH? AM I THE ONLY COP LEFT IN PHILADELPHIA WHO AIN'T CROOKED?!");
+            client.action(channelname, "I'll just regress, because I feel I've made myself perfectly reduntant");
         }
     }
 

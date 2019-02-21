@@ -205,7 +205,6 @@ async function getUpTime(){
         var start = stream.startDate; // Start date
         var currentTime = new Date(); // Current time
         msdifference = (currentTime - start); // Difference
-        console.log(convertUptime(msdifference)); 
         output = convertUptime(msdifference);
         if(output.day === 0 && output.hour === 0 && output.minutes === 0){
             client.action(channelname, channelname + " has been live for " + output.seconds + " seconds");
@@ -248,6 +247,73 @@ function convertUptime(milliseconds) {
 
 // Debug
 
+// Get starcraft opponent if you're running this application locally
+function getOpponent(){
+    http = require('http');
+    var gameurl = "http://localhost:6119/game"; //StarCraft 2 Port
+    http.get(gameurl, (resp) => {
+        resp.on('data', (chunk) => {
+            data = JSON.parse(chunk);
+        });
+        resp.on('end', () => {
+            if(!data.isReplay){
+                players = data.players;
+                player1 = players[0];
+                player2 = players[1];
+                client.action(channelname, player1.name + " is playing " + player2.name);
+            }
+            else{
+                client.action(channelname, channelname + " is not playing a game right now");
+            }
+          });
+        
+        }).on("error", (err) => {
+          console.log("Error: " + err.message);
+        });
+}
+
+function getMatchup(){
+    http = require('http');
+    var gameurl = "http://localhost:6119/game"; //StarCraft 2 Port
+    http.get(gameurl, (resp) => {
+        resp.on('data', (chunk) => {
+            data = JSON.parse(chunk);
+        });
+        resp.on('end', () => {
+            if(!data.isReplay){
+                players = data.players;
+                player1 = players[0];
+                player2 = players[1];
+                if(player1.race == "Prot"){
+                    player1race = 'P';
+                }
+                if(player1.race == "Zerg"){
+                    player1race = 'Z';
+                }
+                if(player1.race == "Terr"){
+                    player1race = 'T';
+                }
+                if(player2.race == "Prot"){
+                    player2race = 'P';
+                }
+                if(player2.race == "Zerg"){
+                    player2race = 'Z';
+                }
+                if(player2.race == "Terr"){
+                    player2race = 'T';
+                }
+                client.action(channelname, player1race + 'v' + player2race);
+            }
+            else{
+                client.action(channelname, channelname + " is not playing a game right now");
+            }
+          });
+        
+        }).on("error", (err) => {
+          console.log("Error: " + err.message);
+        });
+}
+
 // Connect to channel
 var client = new tmi.client(options);
 
@@ -288,7 +354,6 @@ setInterval(() => {
         count = 0;
         client.action(channelname, messagesJson[count]);
     }
-    console.log(count);
     count = count + 1;
 }, messageInterval.interval); 
 
@@ -302,16 +367,12 @@ client.on("subscription", (channel, username, method, message, userstate) => {
     var random = Math.floor(Math.random() * Object.keys(submessagesJson).length);
     var message = submessagesJson[random];
     strArrayMessage = message.split(" ");
-    console.log(strArrayMessage);
     for(index = 0; index < strArrayMessage.length; index ++){
-        console.log(strArrayMessage[index]);
         if(strArrayMessage[index] == "user"){
             strArrayMessage[index] = strArrayMessage[index].replace("user", username);
-            console.log(strArrayMessage[index]);
         }
         else{
             index = index + 1;
-            console.log(index);
         }
     }
     strArrayMessage = strArrayMessage.join(" ");
@@ -323,16 +384,12 @@ client.on("resub", function (channel, username, months, message) {
     var random = Math.floor(Math.random() * Object.keys(submessagesJson).length);
     var message = submessagesJson[random];
     strArrayMessage = message.split(" ");
-    console.log(strArrayMessage);
     for(index = 0; index < strArrayMessage.length; index ++){
-        console.log(strArrayMessage[index]);
         if(strArrayMessage[index] == "user"){
             strArrayMessage[index] = strArrayMessage[index].replace("user", username);
-            console.log(strArrayMessage[index]);
         }
         else{
             index = index + 1;
-            console.log(index);
         }
     }
     strArrayMessage = strArrayMessage.join(" ");
@@ -344,16 +401,12 @@ client.on("ban", (channel, username, reason) => {
     var random = Math.floor(Math.random() * Object.keys(banmessagesJson).length);
     var message = banmessagesJson[random];
     strArrayMessage = message.split(" ");
-    console.log(strArrayMessage);
     for(index = 0; index < strArrayMessage.length; index ++){
-        console.log(strArrayMessage[index]);
         if(strArrayMessage[index] == "user"){
             strArrayMessage[index] = strArrayMessage[index].replace("user", username);
-            console.log(strArrayMessage[index]);
         }
         else{
             index = index + 1;
-            console.log(index);
         }
     }
     strArrayMessage = strArrayMessage.join(" ");
@@ -376,7 +429,6 @@ client.on('chat', function(channel, user, message, self){
     try{
         messageMinusExclamation = message.replace('/!/g','');
         var strArray = messageMinusExclamation.split(" ");
-        console.log(strArray.length);
     }catch(err){
         console.log(err);
     }
@@ -389,7 +441,6 @@ client.on('chat', function(channel, user, message, self){
     // Add command to commands.json
     if(strArray[0] === ("!add")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
-            console.log(strArray);
             if (strArray.length < 3){
                 client.action(channelname, "Command format: \"!add !command message\"");
             }
@@ -397,7 +448,6 @@ client.on('chat', function(channel, user, message, self){
                 var sentenceArray = strArray.slice(); // Clone array
                 sentenceArray.shift();
                 sentenceArray.shift();
-                console.log(sentenceArray);
                 var json = constructJson(strArray[1], sentenceArray.join(" ").toString());
                 fs.writeFileSync("./commands.json", json, finished());
                 function finished(error){
@@ -450,7 +500,6 @@ client.on('chat', function(channel, user, message, self){
                 keyvalue = Object.keys(submessagesJson).length;
                 submessagesJson[keyvalue] = sentenceArray.join(" ");
                 strJson = JSON.stringify(submessagesJson, null, 4);
-                console.log("object size: " + keyvalue);
                 fs.writeFileSync("./submessages.json", strJson, finished());
                 function finished(error){
                     client.action(channelname, sentenceArray.join(" ") + " submessage added!");
@@ -474,7 +523,6 @@ client.on('chat', function(channel, user, message, self){
                 keyvalue = Object.keys(banmessagesJson).length;
                 banmessagesJson[keyvalue] = sentenceArray.join(" ");
                 strJson = JSON.stringify(banmessagesJson, null, 4);
-                console.log("object size: " + keyvalue);
                 fs.writeFileSync("./banmessages.json", strJson, finished());
                 function finished(error){
                     client.action(channelname, sentenceArray.join(" ") + " submessage added!");
@@ -498,7 +546,6 @@ client.on('chat', function(channel, user, message, self){
                 keyvalue = Object.keys(messagesJson).length;
                 messagesJson[keyvalue] = sentenceArray.join(" ");
                 strJson = JSON.stringify(messagesJson, null, 4);
-                console.log("object size: " + keyvalue);
                 fs.writeFileSync("./messages.json", strJson, finished());
                 function finished(error){
                     client.action(channelname, sentenceArray.join(" ") + " message added!");
@@ -512,7 +559,12 @@ client.on('chat', function(channel, user, message, self){
     
     // Respond with Starcraft II opponent of streamer NOT FINISHED
     if(strArray[0] === ("!opponent")){
-        // client.action(channelname, opponent string);
+        getOpponent();
+    }
+
+    // Respond with Starcraft II opponent of streamer NOT FINISHED
+    if(strArray[0] === ("!matchup")){
+        getMatchup();
     }
 
     // Bot kill NOT FINISHED
@@ -526,7 +578,6 @@ client.on('chat', function(channel, user, message, self){
     function constructJson(jsonKey, jsonValue){
         commandsJson[jsonKey] = jsonValue;
         var stringifyJson = JSON.stringify(commandsJson, null, 4);
-        console.log(stringifyJson);
         return stringifyJson;
     }
 

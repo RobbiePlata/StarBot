@@ -268,10 +268,11 @@ function getOpponent(){
           });
         
         }).on("error", (err) => {
-          console.log("Error: " + err.message);
+          console.log("Starcraft needs to be open");
         });
 }
 
+// Get Starcraft II matchup
 function getMatchup(){
     http = require('http');
     var gameurl = "http://localhost:6119/game"; //StarCraft 2 Port
@@ -310,7 +311,7 @@ function getMatchup(){
           });
         
         }).on("error", (err) => {
-          console.log("Error: " + err.message);
+          console.log("Starcraft needs to be open");
         });
 }
 
@@ -364,15 +365,14 @@ client.on("hosted", (channel, username, viewers, autohost) => {
 
 // Subscription
 client.on("subscription", (channel, username, method, message, userstate) => {
+    var submessagesJson = require("./submessages.json");
     var random = Math.floor(Math.random() * Object.keys(submessagesJson).length);
     var message = submessagesJson[random];
     strArrayMessage = message.split(" ");
+    //console.log(strArrayMessage);
     for(index = 0; index < strArrayMessage.length; index ++){
-        if(strArrayMessage[index] == "user"){
-            strArrayMessage[index] = strArrayMessage[index].replace("user", username);
-        }
-        else{
-            index = index + 1;
+        if(strArrayMessage[index].toLowerCase() == "user"){
+            strArrayMessage[index] = username;
         }
     }
     strArrayMessage = strArrayMessage.join(" ");
@@ -381,15 +381,13 @@ client.on("subscription", (channel, username, method, message, userstate) => {
 
 // Resub
 client.on("resub", function (channel, username, months, message) {
+    var submessagesJson = require("./submessages.json");
     var random = Math.floor(Math.random() * Object.keys(submessagesJson).length);
     var message = submessagesJson[random];
     strArrayMessage = message.split(" ");
     for(index = 0; index < strArrayMessage.length; index ++){
-        if(strArrayMessage[index] == "user"){
-            strArrayMessage[index] = strArrayMessage[index].replace("user", username);
-        }
-        else{
-            index = index + 1;
+        if(strArrayMessage[index].toLowerCase() == "user"){
+            strArrayMessage[index] = username;
         }
     }
     strArrayMessage = strArrayMessage.join(" ");
@@ -398,15 +396,13 @@ client.on("resub", function (channel, username, months, message) {
 
 // Ban
 client.on("ban", (channel, username, reason) => {
+    var banmessagesJson = require("./banmessages.json");
     var random = Math.floor(Math.random() * Object.keys(banmessagesJson).length);
     var message = banmessagesJson[random];
     strArrayMessage = message.split(" ");
     for(index = 0; index < strArrayMessage.length; index ++){
-        if(strArrayMessage[index] == "user"){
-            strArrayMessage[index] = strArrayMessage[index].replace("user", username);
-        }
-        else{
-            index = index + 1;
+        if(strArrayMessage[index].toLowerCase() == "user"){
+            strArrayMessage[index] = username;
         }
     }
     strArrayMessage = strArrayMessage.join(" ");

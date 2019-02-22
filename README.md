@@ -7,11 +7,9 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-An install of node.js using the Node.js Setup wizard
-A TwitchTV name for your bot to use
-A TwitchTV channel for your bot to hang out
+An install of node.js using the Node.js Setup wizard.
+A TwitchTV name for your bot to use.
+A TwitchTV channel for your bot to stay at.
 
 ### Installing
 In windows, open a command prompt in the directory of the bot
@@ -22,7 +20,11 @@ Access the directory of your bot from the command prompt
 ```
 cd C:\Users\Robbie Plata\Documents\OcularPatdownBot
 ```
-Copy and enter the following commands line by line:
+To install all required files just type the following command to install all package dependencies:
+```
+npm install
+```
+OR Copy and enter the following commands line by line:
 ```
 npm install get-json
 ```

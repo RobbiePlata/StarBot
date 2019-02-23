@@ -271,10 +271,15 @@ async function searchSC2Unmasked(player1, player2, callback){
             });
             
             resp.on('end', () => {
-                playerdata = JSON.parse(playerdatastr);
-                mmr = getMMR(playerdata, player, function(mmr){
-                    callback(mmr);
-                })
+                if(playerdatastr != ""){
+                    playerdata = JSON.parse(playerdatastr);
+                    mmr = getMMR(playerdata, player, function(mmr){
+                        callback(mmr);
+                    })
+                }
+                else{
+                    callback("?","?");
+                }
             });
     
             }).on("error", (err) => {

@@ -12,7 +12,7 @@ channelname = getChannelName();
 // twitch-api information
 var clientid = fs.readFileSync('./clientid.txt','utf8');
 const accessToken = getAccessToken(clientid);
-twitchClient = twitchClient.withCredentials(clientid, accessToken);
+twitchClient = twitchClient.withCredentials(clientid, accessToken); 
 
 console.log("clientid: " + clientid);
 console.log("apikey: " + apikey);
@@ -23,6 +23,8 @@ var commandsJson = require("./commands.json");
 var banmessagesJson = require("./banmessages.json");
 var submessagesJson = require("./submessages.json");
 var messagesJson = require("./messages.json");
+
+sc2server = 'us'; // Sets a constraint on the selectable sc2unmasked accounts
 
 // Twitch Information
 var options = {
@@ -245,10 +247,52 @@ function convertUptime(milliseconds) {
     };
 }
 
-// Debug
+// Search Sc2Unmasked and return MMRs of two players
+async function searchSC2Unmasked(player1, player2, callback){
+    http = require('http');
+    var player1search = "http://sc2unmasked.com/API/Player?name=" + player1.name;
+    var player2search = "http://sc2unmasked.com/API/Player?name=" + player2.name;
+
+    async function getMMR(playerdata, player, callback){
+        mmr = 0;
+        for (i = 0; i < playerdata.players.length; i++){
+            if(playerdata.players[i].acc_name == player.name && playerdata.players[i].server == sc2server && playerdata.players[i].mmr > mmr){
+                mmr = playerdata.players[i].mmr;
+            }
+        }
+        callback(mmr);
+    }
+
+    async function requestSC2Unmasked(playersearch, player, callback){
+        http.get(playersearch, (resp) => {
+            playerdatastr ="";
+            resp.on('data', (chunk) => {
+                playerdatastr += chunk;
+            });
+            
+            resp.on('end', () => {
+                playerdata = JSON.parse(playerdatastr);
+                mmr = getMMR(playerdata, player, function(mmr){
+                    callback(mmr);
+                })
+            });
+    
+            }).on("error", (err) => {
+                console.log(err);
+                mmr1 = "?";
+                callback(mmr);
+            });
+    }
+
+    mmr1 = requestSC2Unmasked(player1search, player1, function(mmr1){
+        mmr2 = requestSC2Unmasked(player2search, player2, function(mmr2){
+            callback(mmr1, mmr2);
+        })
+    })
+}
 
 // Get starcraft opponent if you're running this application locally
-function getOpponent(){
+async function getOpponent(){
     http = require('http');
     var gameurl = "http://localhost:6119/game"; //StarCraft 2 Port
     http.get(gameurl, (resp) => {
@@ -256,63 +300,42 @@ function getOpponent(){
             data = JSON.parse(chunk);
         });
         resp.on('end', () => {
-            if(!data.isReplay){
-                players = data.players;
-                player1 = players[0];
-                player2 = players[1];
-                client.action(channelname, player1.name + " is playing " + player2.name);
-            }
-            else{
-                client.action(channelname, channelname + " is not playing a game right now");
-            }
-          });
+            console.log(data);
+            searchSC2Unmasked(data.players[0], data.players[1], function(mmr1, mmr2){
+                if(data.isReplay == false){
+                    console.log("gets here");
+                    console.log(mmr1, mmr2);
+                    players = data.players;
+                    player1 = players[0];
+                    player1race = getMatchup(player1.race);
+                    player2 = players[1];
+                    player2race = getMatchup(player2.race);
+                    client.action(channelname, player1.name + " (" + player1race + "), " + mmr1 + " MMR" + " VS " + player2.name + " (" + player2race  + "), " + mmr2 + " MMR");
+                }
+                else{
+                    client.action(channelname, channelname + " is in not in a game, or is in a replay");
+                }
+            });
+        });
         
         }).on("error", (err) => {
           console.log("Starcraft needs to be open");
+          client.action(channelname, "StarCraft must be open");
         });
 }
 
 // Get Starcraft II matchup
-function getMatchup(){
-    http = require('http');
-    var gameurl = "http://localhost:6119/game"; //StarCraft 2 Port
-    http.get(gameurl, (resp) => {
-        resp.on('data', (chunk) => {
-            data = JSON.parse(chunk);
-        });
-        resp.on('end', () => {
-            if(!data.isReplay){
-                players = data.players;
-                player1 = players[0];
-                player2 = players[1];
-                if(player1.race == "Prot"){
-                    player1race = 'P';
-                }
-                if(player1.race == "Zerg"){
-                    player1race = 'Z';
-                }
-                if(player1.race == "Terr"){
-                    player1race = 'T';
-                }
-                if(player2.race == "Prot"){
-                    player2race = 'P';
-                }
-                if(player2.race == "Zerg"){
-                    player2race = 'Z';
-                }
-                if(player2.race == "Terr"){
-                    player2race = 'T';
-                }
-                client.action(channelname, player1race + 'v' + player2race);
-            }
-            else{
-                client.action(channelname, channelname + " is not playing a game right now");
-            }
-          });
-        
-        }).on("error", (err) => {
-          console.log("Starcraft needs to be open");
-        });
+function getMatchup(race){
+    if(race == "Prot"){
+        race = 'P';
+    }
+    if(race == "Zerg"){
+        race = 'Z';
+    }
+    if(race == "Terr"){
+        race = 'T';
+    }
+    return race;
 }
 
 // Connect to channel
@@ -556,11 +579,6 @@ client.on('chat', function(channel, user, message, self){
     // Respond with Starcraft II opponent of streamer NOT FINISHED
     if(strArray[0] === ("!opponent")){
         getOpponent();
-    }
-
-    // Respond with Starcraft II opponent of streamer NOT FINISHED
-    if(strArray[0] === ("!matchup")){
-        getMatchup();
     }
 
     // Bot kill NOT FINISHED

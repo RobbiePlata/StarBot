@@ -250,9 +250,8 @@ function convertUptime(milliseconds) {
 // Search Sc2Unmasked and return MMRs of two players
 async function searchSC2Unmasked(player1, player2, callback){
     http = require('http');
-    var player1search = "http://sc2unmasked.com/API/Player?name=" + player1.name;
-    var player2search = "http://sc2unmasked.com/API/Player?name=" + player2.name;
-
+    var player1search = "http://sc2unmasked.com/API/Player?name=" + player1.name + "&server=" + sc2server + "&race=" + getMatchup(player1.race).toLowerCase();
+    var player2search = "http://sc2unmasked.com/API/Player?name=" + player2.name + "&server=" + sc2server + "&race=" + getMatchup(player2.race).toLowerCase();
     async function getMMR(playerdata, player, callback){
         mmr = 0;
         for (i = 0; i < playerdata.players.length; i++){
@@ -308,7 +307,6 @@ async function getOpponent(){
             console.log(data);
             searchSC2Unmasked(data.players[0], data.players[1], function(mmr1, mmr2){
                 if(data.isReplay == false){
-                    console.log("gets here");
                     console.log(mmr1, mmr2);
                     players = data.players;
                     player1 = players[0];

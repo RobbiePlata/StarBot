@@ -62,3 +62,5 @@ i.e. Incorrectly typed your botapi? Open botapi.txt and delete the contents insi
 ## Acknowledgments
 
 * Thanks to UpATreeZelda for the recommendation to build this bot
+* Users and bugtesters
+Harstem, Puckk

@@ -26,6 +26,8 @@ var messagesJson = require("./messages.json");
 
 sc2server = 'us'; // Sets a constraint on the selectable sc2unmasked accounts
 
+var {PythonShell} = require('python-shell') // Allow the execution of python script
+
 // Twitch Information
 var options = {
     options: {
@@ -341,6 +343,13 @@ function getMatchup(race){
     return race;
 }
 
+// Return stringified json entry
+function constructJson(jsonKey, jsonValue){
+    commandsJson[jsonKey] = jsonValue;
+    var stringifyJson = JSON.stringify(commandsJson, null, 4);
+    return stringifyJson;
+}
+
 // Connect to channel
 var client = new tmi.client(options);
 
@@ -361,6 +370,8 @@ function printCommands(json){
         console.log(key + ': ' + json[key])
     })
 };
+
+
 
 // Welcome Message
 client.on('connected', function(address, port) {
@@ -584,6 +595,16 @@ client.on('chat', function(channel, user, message, self){
         getOpponent();
     }
 
+    // Execute Replay renamer.py script
+    if(strArray[0] === ("!replaypack")){
+        client.action(channelname, "Working on it");
+        PythonShell.run('renamer.py', null, function (err) {
+            client.action(channelname, "Working on it");
+            if (err) throw err;
+            client.action(channelname, "Replaypack finished");
+          });
+    }
+
     // Bot kill NOT FINISHED
     if(strArray[0] === ("!bye")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
@@ -591,11 +612,6 @@ client.on('chat', function(channel, user, message, self){
         }
     }
 
-    // Return stringified json entry
-    function constructJson(jsonKey, jsonValue){
-        commandsJson[jsonKey] = jsonValue;
-        var stringifyJson = JSON.stringify(commandsJson, null, 4);
-        return stringifyJson;
-    }
+    
 
 });

@@ -40,6 +40,12 @@ npm i tmi.js --save
 ```
 npm install --save twitch
 ```
+To install dependencies of renamer.py used for zipping replaypacks
+```
+pip install -r requirements.txt
+Change renamer.py sc2replaypath to your replays folder in the my documents Starcraft II location
+```
+
 When using this bot it is recommended that you uncheck the QuickEditMode option for the batch file so the application does not pause when you select anything in the console. To do this, left click the command prompt icon on the top left of the console. Select Defaults->Options then uncheck QuickEdit Mode.
 ## Deployment
 

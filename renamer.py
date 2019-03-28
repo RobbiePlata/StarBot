@@ -8,8 +8,8 @@ import shutil
 import datetime as dt
 
 # Change this to your current starcraft replay directory
-sc2replaypath = ""
-path = os.getcwd() + '/replays/'
+sc2replaypath = "C:/Users/Robbie Plata/Documents/StarCraft II/Accounts/63292986/1-S2-1-950222/Replays/Multiplayer"
+path = os.getcwd() + "/replays/"
 
 id = [950222]
 region = ""
@@ -24,7 +24,6 @@ currentReplay = ""
 # Process all replays
 def processReplays():
     global currentReplay
-    global replayObjects
     copyRecentReplaysFromSource()
     replayNames = os.listdir(path)
     for index in range(len(replayNames)):
@@ -33,19 +32,22 @@ def processReplays():
             replay = sc2reader.load_replay(path + currentReplay)
             getPlayerInfo(replay)
             getRatings(players[0], players[1], races[0], races[1])
-            newName = createReplayString()
+            newName = createReplayString(str(replay.date).replace(":", "."))
             print(newName)
             renameFile(newName)
             clear()
-        except:
-            print("A non 1v1 can't be processed")
-    zipname = "Rob ReplayPack " + str(datetime.datetime.now().month) + '-' + str(datetime.datetime.now().day) + '-' + str(datetime.datetime.now().year) + ".zip";
-    zipf = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
-    zipdir(path, zipf)
-    zipf.close()
-    print(os.getcwd() + '/' + zipname)
-    shutil.move(os.getcwd() + "\\" + zipname, os.environ['USERPROFILE'] + '\Desktop')
-    print('zipped')
+        except Exception as err:
+            print("A non 1v1 can't be processed.", str(err))
+    try:
+        zipname = "Rob ReplayPack " + str(datetime.datetime.now().month) + '-' + str(datetime.datetime.now().day) + '-' + str(datetime.datetime.now().year) + ".zip";
+        zipf = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
+        zipdir(path, zipf)
+        zipf.close()
+        print(os.getcwd() + '/' + zipname)
+        shutil.move(os.getcwd() + "\\" + zipname, os.environ['USERPROFILE'] + '\Desktop')
+        print('zipped')
+    except Exception as err:
+        print(err)
 
 
 # Player Name and Race gathered
@@ -116,16 +118,16 @@ def getMMR(playersearch, name, race):
 
 
 # Create new Replay String
-def createReplayString():
+def createReplayString(datePlayed):
     if players[0] == players[1]:
         if players[0] in id:
-            return '(real) ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR' + ' vs ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR'
+            return datePlayed +' (real) ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR' + ' vs ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR'
         else:
-            return '(real) ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR' + ' vs ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR'
+            return datePlayed +' (real) ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR' + ' vs ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR'
     if uids[0] in id:
-        return players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR' + ' vs ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR'
+        return datePlayed + ' ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR' + ' vs ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR'
     else:
-        return players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR' + ' vs ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR'
+        return datePlayed + ' ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR' + ' vs ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR'
 
 
 def copyRecentReplaysFromSource():
@@ -159,8 +161,8 @@ def renameFile(newname):
                         os.rename(os.path.join(path, filename), os.path.join(path, newname + '(' + str(i) + ')' + '.SC2Replay'))
                         print(newname + '(' + str(i) + ')' + '.SC2Replay' + ' created')
                         go = False
-                    except Exception as ex:
-                        print(path, newname + '(' + str(i) + ')' + '.SC2Replay' + ' exists')
+                    except Exception as err:
+                        print(path, newname + '(' + str(i) + ')' + '.SC2Replay' + ' exists', str(err))
 
 
 def zipdir(path, ziph):

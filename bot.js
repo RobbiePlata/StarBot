@@ -27,7 +27,11 @@ var messagesJson = require("./messages.json");
 sc2server = 'us'; // Sets a constraint on the selectable sc2unmasked accounts
 
 var {PythonShell} = require('python-shell') // Allow the execution of python script
-
+PythonShell.run('Stats Updater.py', null, function (err) {
+    console.log("Recording records..")
+    if (err) throw err;
+  });
+  
 // Twitch Information
 var options = {
     options: {
@@ -597,12 +601,13 @@ client.on('chat', function(channel, user, message, self){
 
     // Execute Replay renamer.py script
     if(strArray[0] === ("!replaypack")){
+        if(user.username === channelname || user.username === channelname.toLowerCase()){
         client.action(channelname, "Working on it");
         PythonShell.run('renamer.py', null, function (err) {
-            client.action(channelname, "Working on it");
             if (err) throw err;
             client.action(channelname, "Replaypack finished");
           });
+        }
     }
 
     // Bot kill NOT FINISHED

@@ -3,6 +3,7 @@ tmi = require('tmi.js');
 twitchClient = require('twitch').default;
 fs = require('fs');
 var readline = require('readline-sync');
+var pirateSpeak = require('pirate-speak');
 
 // twitch-tmi information
 apikey = getBotAPI();
@@ -14,10 +15,6 @@ var clientid = fs.readFileSync('./clientid.txt','utf8');
 const accessToken = getAccessToken(clientid);
 twitchClient = twitchClient.withCredentials(clientid, accessToken); 
 
-console.log("clientid: " + clientid);
-console.log("apikey: " + apikey);
-console.log("Access token: " + accessToken);
-
 // require json directories
 var commandsJson = require("./commands.json");
 var banmessagesJson = require("./banmessages.json");
@@ -26,12 +23,18 @@ var messagesJson = require("./messages.json");
 
 sc2server = 'us'; // Sets a constraint on the selectable sc2unmasked accounts
 
+/*
+console.log("clientid: " + clientid);
+console.log("apikey: " + apikey);
+console.log("Access token: " + accessToken);
+*/
+
 var {PythonShell} = require('python-shell') // Allow the execution of python script
 PythonShell.run('Stats Updater.py', null, function (err) {
     console.log("Recording records..")
     if (err) throw err;
   });
-  
+
 // Twitch Information
 var options = {
     options: {
@@ -253,6 +256,36 @@ function convertUptime(milliseconds) {
     };
 }
 
+// Give me advice
+async function advice(){
+    https = require('https');
+    var adviceapi = "https://api.adviceslip.com/advice";
+    https.get(adviceapi, (resp) => {
+        resp.on('data', (chunk) => {
+            data = JSON.parse(chunk);
+        });
+        resp.on('end', () => {
+            console.log(data.slip.advice);
+            client.action(channelname, data.slip.advice);
+        }).on("error", (err) => {
+            client.action(channelname, "No advice for you");
+          });
+        });
+}
+
+async function shoutout(name){
+    try{
+        if(await isStreamLive(name)){
+            const user = await twitchClient.users.getUserByName(name);
+            const channel = await user.getChannel();
+            client.action(channelname, "Give " + channel.displayName + " a follow at twitch.tv/" + channel.displayName + " They're live right now playing " + channel.game);
+        }
+        else{
+            client.action(channelname, "Give " + name + " a follow at twitch.tv/" + name);
+        }
+    } catch (err) { console.log(err) }
+}
+
 // Search Sc2Unmasked and return MMRs of two players
 async function searchSC2Unmasked(player1, player2, callback){
     http = require('http');
@@ -362,7 +395,7 @@ client.connect(channelname);
 //client.on('ping', () => console.log('[PING] Received ping.'));
 function printCommands(json){
     console.log("\nCurrent Commands:");
-    console.log("\nOnly " + channelname + " has edit authority in chat:");
+    console.log("!shoutout twitchname");
     console.log("!add !command message");
     console.log("!remove !command");
     console.log("!addmessage message")
@@ -375,12 +408,10 @@ function printCommands(json){
     })
 };
 
-
-
 // Welcome Message
 client.on('connected', function(address, port) {
     console.log("Welcome " + channelname + ", " + botusername + " is online!\n");
-    client.action(channelname, "o7 Captain");
+    client.action(channelname, "o7");
     printCommands(commandsJson);
     
 });
@@ -405,7 +436,7 @@ client.on("hosted", (channel, username, viewers, autohost) => {
 });
 
 // Subscription
-client.on("subscription", (channel, username, method, message, userstate) => {
+client.on("subscription", function (channel, username, message, userstate) {
     var submessagesJson = require("./submessages.json");
     var random = Math.floor(Math.random() * Object.keys(submessagesJson).length);
     var message = submessagesJson[random];
@@ -474,6 +505,22 @@ client.on('chat', function(channel, user, message, self){
     if(strArray[0] === ("!uptime")){
         getUpTime(); // TODO get object and post uptime to chat
     }
+    
+    // Respond with Starcraft II opponent of streamer NOT FINISHED
+    if(strArray[0] === ("!opponent")){
+        getOpponent();
+    }
+
+    // Execute Replay renamer.py script
+    if(strArray[0] === ("!replaypack")){
+        if(user.username === channelname || user.username === channelname.toLowerCase()){
+        client.action(channelname, "Working on it");
+        PythonShell.run('renamer.py', null, function (err) {
+            if (err) throw err;
+            client.action(channelname, "Replaypack finished");
+          });
+        }
+    }
 
     // Add command to commands.json
     if(strArray[0] === ("!add")){
@@ -525,7 +572,7 @@ client.on('chat', function(channel, user, message, self){
         }
     }
     
-    // Add sub message to submessages.json NOT FINISHED
+    // Add sub message
     if(strArray[0] === ("!addsub")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
             if (strArray.length < 2){
@@ -548,7 +595,7 @@ client.on('chat', function(channel, user, message, self){
         }
     }
 
-    // Add user ban message NOT FINISHED
+    // Add user ban message
     if(strArray[0] === ("!addban")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
             if (strArray.length < 2){
@@ -571,7 +618,7 @@ client.on('chat', function(channel, user, message, self){
         }
     }
 
-    // Add message that appears every messageInterval
+    // Add periodic message 
     if(strArray[0] === ("!addmessage")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
             if (strArray.length < 2){
@@ -593,30 +640,40 @@ client.on('chat', function(channel, user, message, self){
             client.action(channelname, "You can't tell me what to do");
         }
     }
-    
-    // Respond with Starcraft II opponent of streamer NOT FINISHED
-    if(strArray[0] === ("!opponent")){
-        getOpponent();
+
+    // Remove sub message
+    if(strArray[0] === ("!removesub")){
     }
 
-    // Execute Replay renamer.py script
-    if(strArray[0] === ("!replaypack")){
+    // Remove user ban message
+    if(strArray[0] === ("!removeban")){
+    }
+
+    // Remove periodic message 
+    if(strArray[0] === ("!removemessage")){
+    }
+
+    // Add message that appears every messageInterval
+    if(strArray[0] === ("!shoutout")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
-        client.action(channelname, "Working on it");
-        PythonShell.run('renamer.py', null, function (err) {
-            if (err) throw err;
-            client.action(channelname, "Replaypack finished");
-          });
+            if (strArray.length < 2){
+                client.action(channelname, "Shoutout who?");
+            }
+            else if (strArray.length == 2){
+                shoutout(strArray[1]);
+            }
         }
     }
 
-    // Bot kill NOT FINISHED
-    if(strArray[0] === ("!bye")){
-        if(user.username === channelname || user.username === channelname.toLowerCase()){
-            client.action(channelname, "I'll just regress, because I feel I've made myself perfectly reduntant");
+    // Add message that appears every messageInterval
+    if(strArray[0] === ("!pirate")){
+        if (strArray.length < 2){
+            client.action(channelname, "To talk like a pirate type \"!pirate message here\"");
         }
+        else if (strArray.length >= 2){
+            var sentenceArray = strArray.slice(); // Clone array
+            sentenceArray.shift();
+            client.action(channelname, pirateSpeak.translate(sentenceArray.join(" ")));
+        }   
     }
-
-    
-
 });

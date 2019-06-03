@@ -6,12 +6,15 @@ import datetime
 import sys
 import shutil
 import datetime as dt
+import json
 
-# Change this to your current starcraft replay directory
-sc2replaypath = "C:/Users/Robbie Plata/Documents/StarCraft II/Accounts/63292986/1-S2-1-950222/Replays/Multiplayer"
+with open('config.json') as data_file:
+    data = json.load(data_file)
+
+sc2replaypath = data["App"]["Game"]["path"]
 path = os.getcwd() + "/replays/"
 
-id = [950222]
+id = data["App"]["Game"]["scid"]
 region = ""
 players = []
 races = []

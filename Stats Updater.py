@@ -2,14 +2,20 @@ import os
 import time
 import glob
 import sc2reader
+import json
 
-names = ["Rob"]
+with open('config.json') as data_file:
+    data = json.load(data_file)
+
+path = os.getcwd() + "/replays/"
+
+names = data["App"]["Game"]["names"]
 pvz = 0
 pvt = 0
 pvp = 0
 
 go = True
-pathToStarcraftReplays = "C:/Users/Robbie Plata/Documents/StarCraft II/Accounts/63292986/1-S2-1-950222/Replays/Multiplayer"
+sc2replaypath = data["App"]["Game"]["path"]
 
 
 def process(replay):
@@ -103,6 +109,8 @@ def process(replay):
     except Exception as err:
         print(err)
 
+#TODO -- Write this to config.json instead of text files.
+#ALSO -- Add every possible matchup to this and config.json
 
 writepvtfile = open("pvt.txt", "w")
 writepvzfile = open("pvz.txt", "w")
@@ -115,17 +123,17 @@ writepvzfile.close()
 writepvpfile.close()
 
 while(go):
-    path, dirs, files = next(os.walk(pathToStarcraftReplays))
+    path, dirs, files = next(os.walk(sc2replaypath))
     file_count = len(files)
     print("file count: ", file_count)
 
     time.sleep(5)
-    path, dirs, files = next(os.walk(pathToStarcraftReplays))
+    path, dirs, files = next(os.walk(sc2replaypath))
     newfile_count = len(files)
     print("new file count: " , newfile_count)
 
     if newfile_count > file_count:
-        files = [os.path.join(pathToStarcraftReplays, x) for x in os.listdir(pathToStarcraftReplays) if x.endswith(".SC2Replay")]
+        files = [os.path.join(sc2replaypath, x) for x in os.listdir(sc2replaypath) if x.endswith(".SC2Replay")]
         newest = max(files, key=os.path.getctime)
         print("newest ", newest)
         currentReplayPath = newest

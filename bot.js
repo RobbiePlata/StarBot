@@ -1,33 +1,28 @@
-﻿// Dependencies
+﻿/// Robert Plata
+/// Latest 6.2.2019 11:55pm
+/// Flexible Twitch Bot for use with Starcraft II
+/// Utilized by professional Starcraft players to enhance the viewers' experience
+
+// Dependencies
 tmi = require('tmi.js');
 twitchClient = require('twitch').default;
 fs = require('fs');
 var readline = require('readline-sync');
 var pirateSpeak = require('pirate-speak');
 
+// require json directories
+var config = require("./config.json");
+
 // twitch-tmi information
 apikey = getBotAPI();
 botusername = getBotUsername();
 channelname = getChannelName();
 
-// twitch-api information
-var clientid = fs.readFileSync('./clientid.txt','utf8');
+// twitch-api and game information
+var clientid = config.App.Channel.clientid;
 const accessToken = getAccessToken(clientid);
 twitchClient = twitchClient.withCredentials(clientid, accessToken); 
-
-// require json directories
-var commandsJson = require("./commands.json");
-var banmessagesJson = require("./banmessages.json");
-var submessagesJson = require("./submessages.json");
-var messagesJson = require("./messages.json");
-
-sc2server = 'us'; // Sets a constraint on the selectable sc2unmasked accounts
-
-/*
-console.log("clientid: " + clientid);
-console.log("apikey: " + apikey);
-console.log("Access token: " + accessToken);
-*/
+sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
 
 var {PythonShell} = require('python-shell') // Allow the execution of python script
 PythonShell.run('Stats Updater.py', null, function (err) {
@@ -59,34 +54,25 @@ var messageInterval = {
     set interval(value) {
       this.time = value * 60000;
     }
-  };
-
-// Write out data to path
-function writeToFile(filepath, data){
-    fs.writeFile(filepath, data, function(err) {
-        if(err) {
-            return console.log(err);
-        }
-        console.log("The file was saved!");
-    }); 
-}
+};
 
 // If botusername is empty, ask user for bot username and write to file
 function getBotUsername(){
-    var botusername = fs.readFileSync('./botusername.txt','utf8');
-    if(botusername !== ""){
+    var botusername = config.App.Bot.name;
+    if(botusername !== "" && botusername !== undefined){
         return botusername;
     }
     else{
         bot = readline.question("What is your bot's twitch username?");
-        fs.writeFileSync("./botusername.txt", bot, function(err) {
+        config.App.Bot.name = bot;
+        fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
             if(err) {
                 return console.log(err);
             }
-            console.log("Key saved");
+            console.log("Username saved");
             }); 
             try{
-                return bot = fs.readFileSync('./botusername.txt','utf8');
+                return config.App.Bot.name;
             }catch(err){
                 console.log(err);
             }
@@ -95,9 +81,9 @@ function getBotUsername(){
 
 // Get user access token
 function getAccessToken(){
-    var token = fs.readFileSync('./accesstoken.txt','utf8');
+    var token = config.App.Channel.accessToken;
     // Token is present
-    if(token !== ""){
+    if(token !== "" && token !== undefined){
         return token;
     }
     // Token is not present
@@ -105,73 +91,11 @@ function getAccessToken(){
         userTokenRetreival(); // Open browser for user to enter token
         writeAccessToken(); // Write access token to accesstoken.txt
             try{
-                return token = fs.readFileSync('./accesstoken.txt','utf8');
+                return token = config.App.Channel.accessToken;
             }catch(err){
                 console.log(err);
             }
         }
-}
-
-// If channelname is empty, ask user for channelname & write channelname to file
-function getChannelName(){
-    var channelname = fs.readFileSync('./channelname.txt','utf8');
-    if(channelname !== ""){
-        return channelname;
-    }
-    else{
-        name = readline.question("What is your stream channel?");
-        fs.writeFileSync("./channelname.txt", name, function(err) {
-            if(err) {
-                return console.log(err);
-            }
-            console.log("name saved");
-            }); 
-            try{
-                return bot = fs.readFileSync('./channelname.txt','utf8');
-            }catch(err){
-                console.log(err);
-            }
-    }
-
-}
-
-// Open chrome browser for user api confirmation and retrieval
-function botAPIRetrieval(){
-    var opn = require('opn');
-        opn("https://twitchapps.com/tmi", {
-        app: 'Chrome',
-        wait: true
-    }).then(function(cp) {
-        //console.log('child process:',cp);
-        //console.log('worked');
-    }).catch(function(err) {
-        //console.error(err);
-    });
-}
-
-// If botapi is empty, ask user for prompt user for bot api and write to file
-function getBotAPI(){
-    var botapi = fs.readFileSync('./botapi.txt','utf8');
-    if(botapi !== ""){
-        return botapi;
-    }
-    else{
-        botAPIRetrieval();
-        console.log("A window as been launched to retrieve your key");
-        api = readline.question("What is your bot's oath key?");
-        fs.writeFileSync("./botapi.txt", api, function(err) {
-            if(err) {
-                return console.log(err);
-            }
-            console.log("Key saved");
-            }); 
-            try{
-                return bot = fs.readFileSync('./botapi.txt','utf8');
-            }catch(err){
-                console.log(err);
-            }
-    }
-
 }
 
 // Open chrome browser for authentication token retrieval
@@ -191,12 +115,80 @@ function userTokenRetreival(){
 // Write authentication token to file
 function writeAccessToken(){
     var key = readline.question("What is main channel's authentication key?");
-    fs.writeFileSync("./accesstoken.txt", key, function(err) {
-    if(err) {
-        return console.log(err);
+    config.App.Channel.accessToken = key;
+        fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            console.log("Access Token saved");
+        });
+        try{
+            return config.App.Channel.accessToken;
+        }catch(err){
+            console.log(err);
+        }
+}
+
+// If channelname is empty, ask user for channelname & write channelname to file
+function getChannelName(){
+    var channelname = config.App.Channel.name;
+    if(channelname !== "" && channelname !== undefined){
+        return channelname;
     }
-    console.log("Key saved");
-    }); 
+    else{
+        name = readline.question("What is your stream channel?");
+        config.App.Channel.name = name;
+        fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            console.log("Username saved");
+            }); 
+            try{
+                return config.App.Channel.name;
+            }catch(err){
+                console.log(err);
+            }
+    }
+}
+
+// Open chrome browser for user api confirmation and retrieval
+function botAPIRetrieval(){
+    var opn = require('opn');
+        opn("https://twitchapps.com/tmi", {
+        app: 'Chrome',
+        wait: true
+    }).then(function(cp) {
+        //console.log('child process:',cp);
+        //console.log('worked');
+    }).catch(function(err) {
+        //console.error(err);
+    });
+}
+
+// If botapi is empty, ask user for prompt user for bot api and write to file
+function getBotAPI(){
+    var botapi = config.App.Bot.apikey;
+    if(botapi !== "" && botapi !== undefined){
+        return botapi;
+    }
+    else{
+        botAPIRetrieval();
+        console.log("A window as been launched to retrieve your key");
+        api = readline.question("What is your bot's oath key?");
+        config.App.Bot.apikey = api;
+        fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            console.log("Bot API key saved");
+            }); 
+            try{
+                return config.App.Bot.apikey;
+            }catch(err){
+                console.log(err);
+            }
+    }
 }
 
 // Check if stream is live
@@ -380,20 +372,14 @@ function getMatchup(race){
     return race;
 }
 
-// Return stringified json entry
-function constructJson(jsonKey, jsonValue){
-    commandsJson[jsonKey] = jsonValue;
-    var stringifyJson = JSON.stringify(commandsJson, null, 4);
-    return stringifyJson;
-}
-
 // Connect to channel
 var client = new tmi.client(options);
 
 client.connect(channelname); 
 
 //client.on('ping', () => console.log('[PING] Received ping.'));
-function printCommands(json){
+function printCommands(){
+    commands = config.Commands;
     console.log("\nCurrent Commands:");
     console.log("!shoutout twitchname");
     console.log("!add !command message");
@@ -403,8 +389,8 @@ function printCommands(json){
     console.log("!addban message");
     console.log("!uptime");
     console.log("");
-    Object.keys(json).forEach(function(key) {
-        console.log(key + ': ' + json[key])
+    Object.keys(commands).forEach(function(key) {
+        console.log(key + ': ' + commands[key])
     })
 };
 
@@ -412,20 +398,19 @@ function printCommands(json){
 client.on('connected', function(address, port) {
     console.log("Welcome " + channelname + ", " + botusername + " is online!\n");
     client.action(channelname, "o7");
-    printCommands(commandsJson);
-    
+    printCommands();
 });
 
 // Cycle through messages every set interval
-count = Math.floor(Math.random() * Object.keys(messagesJson).length); // Start count on a random number (So first message is random)
+count = Math.floor(Math.random() * Object.keys(config.Alerts.Messages).length); // Start count on a random number (So first message is random)
 setInterval(() => {
-    messages = require('./messages.json'); // (Allow newly added commands to be recognized every interval)
+    messages = config.Alerts.Messages // (Allow newly added commands to be recognized every interval)
     if(count <= Object.keys(messages).length - 1){
-        client.action(channelname, messagesJson[count]);
+        client.action(channelname, config.Alerts.Messages[count]);
     }
     else{
         count = 0;
-        client.action(channelname, messagesJson[count]);
+        client.action(channelname, config.Alerts.Messages[count]);
     }
     count = count + 1;
 }, messageInterval.interval); 
@@ -437,9 +422,9 @@ client.on("hosted", (channel, username, viewers, autohost) => {
 
 // Subscription
 client.on("subscription", function (channel, username, message, userstate) {
-    var submessagesJson = require("./submessages.json");
-    var random = Math.floor(Math.random() * Object.keys(submessagesJson).length);
-    var message = submessagesJson[random];
+    var submessages = config.Alerts.Submessages;
+    var random = Math.floor(Math.random() * Object.keys(submessages).length);
+    var message = submessages[random];
     strArrayMessage = message.split(" ");
     //console.log(strArrayMessage);
     for(index = 0; index < strArrayMessage.length; index ++){
@@ -453,9 +438,9 @@ client.on("subscription", function (channel, username, message, userstate) {
 
 // Resub
 client.on("resub", function (channel, username, months, message) {
-    var submessagesJson = require("./submessages.json");
-    var random = Math.floor(Math.random() * Object.keys(submessagesJson).length);
-    var message = submessagesJson[random];
+    var submessages = config.Alerts.Submessages;
+    var random = Math.floor(Math.random() * Object.keys(submessages).length);
+    var message = submessages[random];
     strArrayMessage = message.split(" ");
     for(index = 0; index < strArrayMessage.length; index ++){
         if(strArrayMessage[index].toLowerCase() == "user"){
@@ -468,9 +453,9 @@ client.on("resub", function (channel, username, months, message) {
 
 // Ban
 client.on("ban", (channel, username, reason) => {
-    var banmessagesJson = require("./banmessages.json");
-    var random = Math.floor(Math.random() * Object.keys(banmessagesJson).length);
-    var message = banmessagesJson[random];
+    var banmessages = config.Alerts.BanMessages;
+    var random = Math.floor(Math.random() * Object.keys(banmessages).length);
+    var message = banmessages[random];
     strArrayMessage = message.split(" ");
     for(index = 0; index < strArrayMessage.length; index ++){
         if(strArrayMessage[index].toLowerCase() == "user"){
@@ -484,10 +469,10 @@ client.on("ban", (channel, username, reason) => {
 // Commands
 client.on('chat', function(channel, user, message, self){
     
-    // Respond to user command using commands.json
-    if(commandsJson.hasOwnProperty(message)){
+    // Respond to user command using commands
+    if(config.Commands.hasOwnProperty(message)){
         try{
-            client.action(channelname, commandsJson[message]);       
+            client.action(channelname, config.Commands[message]);       
         }catch(error){
             console.log(error);
         }
@@ -522,7 +507,7 @@ client.on('chat', function(channel, user, message, self){
         }
     }
 
-    // Add command to commands.json
+    // Add command to commands
     if(strArray[0] === ("!add")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
             if (strArray.length < 3){
@@ -532,8 +517,8 @@ client.on('chat', function(channel, user, message, self){
                 var sentenceArray = strArray.slice(); // Clone array
                 sentenceArray.shift();
                 sentenceArray.shift();
-                var json = constructJson(strArray[1], sentenceArray.join(" ").toString());
-                fs.writeFileSync("./commands.json", json, finished());
+                config.Commands[strArray[1]] = sentenceArray.join(" ").toString();
+                fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
                 function finished(error){
                     client.action(channelname, "command " + strArray[1] +" added");
                 }
@@ -547,7 +532,7 @@ client.on('chat', function(channel, user, message, self){
         }
     }
 
-    // Remove command from commands.json
+    // Remove command from commands
     if(strArray[0] === ("!remove")){
         if(user.username === channelname.user || user.username === channelname.toLowerCase()){
             if(strArray.length < 2 || strArray.length > 2){
@@ -555,9 +540,9 @@ client.on('chat', function(channel, user, message, self){
             }
             if(strArray.length === 2){
                 if(strArray[1].charAt(0) == "!"){
-                    delete commandsJson[strArray[1]];
-                    strJson = JSON.stringify(commandsJson, null, 4);
-                    fs.writeFileSync("./commands.json", strJson, finished());
+                    delete config.Commands[strArray[1]];
+                    strConfig = JSON.stringify(config, null, 4);
+                    fs.writeFileSync("./config.json", strConfig, finished());
                     function finished(error){
                         client.action(channelname, "command " + strArray[1] +" removed");
                     }
@@ -581,10 +566,9 @@ client.on('chat', function(channel, user, message, self){
             else if (strArray.length >= 2){
                 var sentenceArray = strArray.slice(); // Clone array
                 sentenceArray.shift();
-                keyvalue = Object.keys(submessagesJson).length;
-                submessagesJson[keyvalue] = sentenceArray.join(" ");
-                strJson = JSON.stringify(submessagesJson, null, 4);
-                fs.writeFileSync("./submessages.json", strJson, finished());
+                keyvalue = Object.keys(config.Alerts.SubMessages).length;
+                config.Alerts.SubMessages[keyvalue] = sentenceArray.join(" ").toString();
+                fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
                 function finished(error){
                     client.action(channelname, sentenceArray.join(" ") + " submessage added!");
                 }
@@ -599,17 +583,16 @@ client.on('chat', function(channel, user, message, self){
     if(strArray[0] === ("!addban")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
             if (strArray.length < 2){
-                client.action(channelname, "To add a ban message type \"!addban message here\"");
+                client.action(channelname, "To add a sub message type \"!addsub message here\"");
             }
             else if (strArray.length >= 2){
                 var sentenceArray = strArray.slice(); // Clone array
                 sentenceArray.shift();
-                keyvalue = Object.keys(banmessagesJson).length;
-                banmessagesJson[keyvalue] = sentenceArray.join(" ");
-                strJson = JSON.stringify(banmessagesJson, null, 4);
-                fs.writeFileSync("./banmessages.json", strJson, finished());
+                keyvalue = Object.keys(config.Alerts.BanMessages).length;
+                config.Alerts.BanMessages[keyvalue] = sentenceArray.join(" ").toString();
+                fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
                 function finished(error){
-                    client.action(channelname, sentenceArray.join(" ") + " submessage added!");
+                    client.action(channelname, sentenceArray.join(" ") + " banmessage added!");
                 }
             }   
         }
@@ -622,18 +605,9 @@ client.on('chat', function(channel, user, message, self){
     if(strArray[0] === ("!addmessage")){
         if(user.username === channelname || user.username === channelname.toLowerCase()){
             if (strArray.length < 2){
-                client.action(channelname, "To add a message type \"!addmessage message here\"");
+                client.action(channelname, "To add a sub message type \"!addsub message here\"");
             }
             else if (strArray.length >= 2){
-                var sentenceArray = strArray.slice(); // Clone array
-                sentenceArray.shift();
-                keyvalue = Object.keys(messagesJson).length;
-                messagesJson[keyvalue] = sentenceArray.join(" ");
-                strJson = JSON.stringify(messagesJson, null, 4);
-                fs.writeFileSync("./messages.json", strJson, finished());
-                function finished(error){
-                    client.action(channelname, sentenceArray.join(" ") + " message added!");
-                }
             }   
         }
         else{

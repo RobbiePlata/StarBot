@@ -1,0 +1,39 @@
+{
+    "App": {
+        "Channel": {
+            "name": "",
+            "clientid": "",
+            "accessToken": ""
+        },
+        "Bot": {
+            "name": "",
+            "apikey": ""
+        },
+        "Game": {
+            "scid": "",
+            "names": [
+                ""
+            ],
+            "path": "",
+            "region": "",
+            "Winrates": {
+                "pvp": "0-0",
+                "pvz": "0-0",
+                "pvt": "0-0"
+            }
+        }
+    },
+    "Commands": {
+    },
+    "Alerts": {
+        "Messages": {
+            "0": ""
+        },
+        "SubMessages": {
+            "0": "Thank you for subscribing user !"
+        },
+        "BanMessages": {
+            "0": "Get out of here user"
+        }
+    }
+}

@@ -32,7 +32,7 @@ def processReplays():
             replay = sc2reader.load_replay(path + currentReplay)
             getPlayerInfo(replay)
             getRatings(players[0], players[1], races[0], races[1])
-            newName = createReplayString(str(replay.date).replace(":", "."))
+            newName = createReplayString(str(replay.date).replace(":", "."), str(replay.map_name))
             print(newName)
             renameFile(newName)
             clear()
@@ -118,16 +118,17 @@ def getMMR(playersearch, name, race):
 
 
 # Create new Replay String
-def createReplayString(datePlayed):
+def createReplayString(datePlayed, mapname):
+    print(mapname)
     if players[0] == players[1]:
         if players[0] in id:
-            return datePlayed +' (real) ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR' + ' vs ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR'
+            return mapname +' (real) ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR' + ' vs ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR'
         else:
-            return datePlayed +' (real) ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR' + ' vs ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR'
+            return mapname +' (real) ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR' + ' vs ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR'
     if uids[0] in id:
-        return datePlayed + ' ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR' + ' vs ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR'
+        return mapname + ' ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR' + ' vs ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR'
     else:
-        return datePlayed + ' ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR' + ' vs ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR'
+        return mapname + ' ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR' + ' vs ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR'
 
 
 def copyRecentReplaysFromSource():

@@ -98,11 +98,10 @@ function getAccessToken(){
         }
 }
 
-// Open chrome browser for authentication token retrieval
+// Open web browser for authentication token retrieval
 function userTokenRetreival(){
     var opn = require('opn');
         opn("https://twitchtokengenerator.com/", {
-        app: 'Chrome',
         wait: true
     }).then(function(cp) {
         //console.log('child process:',cp);
@@ -152,11 +151,10 @@ function getChannelName(){
     }
 }
 
-// Open chrome browser for user api confirmation and retrieval
+// Open web browser for user api confirmation and retrieval
 function botAPIRetrieval(){
     var opn = require('opn');
         opn("https://twitchapps.com/tmi", {
-        app: 'Chrome',
         wait: true
     }).then(function(cp) {
         //console.log('child process:',cp);

@@ -10,7 +10,7 @@
             "apikey": ""
         },
         "Game": {
-            "scid": "",
+            "scid": [""],
             "names": [
                 ""
             ],

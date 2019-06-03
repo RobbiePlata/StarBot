@@ -20,10 +20,12 @@ channelname = getChannelName();
 replaypath = getReplayPath();
 
 // twitch-api and game information
-var clientid = config.App.Channel.clientid;
-const accessToken = getAccessToken(clientid);
-twitchClient = twitchClient.withCredentials(clientid, accessToken); 
-sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
+try{
+    var clientid = config.App.Channel.clientid;
+    const accessToken = getAccessToken(clientid);
+    twitchClient = twitchClient.withCredentials(clientid, accessToken); 
+    sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
+} catch { }
 
 // Twitch Information
 var options = {
@@ -394,49 +396,58 @@ var client = new tmi.client(options);
 
 client.connect(channelname); 
 
-var {PythonShell} = require('python-shell') // Allow the execution of python script
-PythonShell.run('Stats Updater.py', null, function (err) {
-    console.log("Recording records..")
-    if (err) throw err;
-  });
+try{
+    var {PythonShell} = require('python-shell') // Allow the execution of python script
+    PythonShell.run('Stats Updater.py', null, function (err) {
+        console.log("Recording records..")
+        if (err) throw err;
+      });
+} catch { }
 
 //client.on('ping', () => console.log('[PING] Received ping.'));
 function printCommands(){
-    commands = config.Commands;
-    console.log("\nCurrent Commands:");
-    console.log("!shoutout twitchname");
-    console.log("!add !command message");
-    console.log("!remove !command");
-    console.log("!addmessage message")
-    console.log("!addsub message");
-    console.log("!addban message");
-    console.log("!uptime");
-    console.log("");
-    Object.keys(commands).forEach(function(key) {
-        console.log(key + ': ' + commands[key])
-    })
+    try{
+        commands = config.Commands;
+        console.log("\nCurrent Commands:");
+        console.log("!shoutout twitchname");
+        console.log("!add !command message");
+        console.log("!remove !command");
+        console.log("!addmessage message")
+        console.log("!addsub message");
+        console.log("!addban message");
+        console.log("!uptime");
+        console.log("");
+        Object.keys(commands).forEach(function(key) {
+            console.log(key + ': ' + commands[key])
+        })
+    } catch { }
 };
 
 // Welcome Message
 client.on('connected', function(address, port) {
-    console.log("Welcome " + channelname + ", " + botusername + " is online!\n");
-    client.action(channelname, "o7");
-    printCommands();
+    try{
+        console.log("Welcome " + channelname + ", " + botusername + " is online!\n");
+        client.action(channelname, "o7");
+        printCommands();
+    } catch { }
 });
 
 // Cycle through messages every set interval
-count = Math.floor(Math.random() * Object.keys(config.Alerts.Messages).length); // Start count on a random number (So first message is random)
-setInterval(() => {
-    messages = config.Alerts.Messages // (Allow newly added commands to be recognized every interval)
-    if(count <= Object.keys(messages).length - 1){
-        client.action(channelname, config.Alerts.Messages[count]);
-    }
-    else{
-        count = 0;
-        client.action(channelname, config.Alerts.Messages[count]);
-    }
-    count = count + 1;
-}, messageInterval.interval); 
+try{
+    count = Math.floor(Math.random() * Object.keys(config.Alerts.Messages).length); // Start count on a random number (So first message is random)
+    setInterval(() => {
+        messages = config.Alerts.Messages // (Allow newly added commands to be recognized every interval)
+        if(count <= Object.keys(messages).length - 1){
+            client.action(channelname, config.Alerts.Messages[count]);
+        }
+        else{
+            count = 0;
+            client.action(channelname, config.Alerts.Messages[count]);
+        }
+        count = count + 1;
+    }, messageInterval.interval); 
+} catch { }
+
 
 // Hosted
 client.on("hosted", (channel, username, viewers, autohost) => {
@@ -445,62 +456,70 @@ client.on("hosted", (channel, username, viewers, autohost) => {
 
 // Subscription
 client.on("subscription", function (channel, username, message, userstate) {
-    var submessages = config.Alerts.Submessages;
-    var random = Math.floor(Math.random() * Object.keys(submessages).length);
-    var message = submessages[random];
-    strArrayMessage = message.split(" ");
-    //console.log(strArrayMessage);
-    for(index = 0; index < strArrayMessage.length; index ++){
-        if(strArrayMessage[index].toLowerCase() == "user"){
-            strArrayMessage[index] = username;
+    try{
+        var submessages = config.Alerts.Submessages;
+        var random = Math.floor(Math.random() * Object.keys(submessages).length);
+        var message = submessages[random];
+        strArrayMessage = message.split(" ");
+        //console.log(strArrayMessage);
+        for(index = 0; index < strArrayMessage.length; index ++){
+            if(strArrayMessage[index].toLowerCase() == "user"){
+                strArrayMessage[index] = username;
+            }
         }
-    }
-    strArrayMessage = strArrayMessage.join(" ");
-    client.action(channelname, strArrayMessage);
+        strArrayMessage = strArrayMessage.join(" ");
+        client.action(channelname, strArrayMessage);
+    } catch { }
 });
 
 // Resub
 client.on("resub", function (channel, username, months, message) {
-    var submessages = config.Alerts.Submessages;
-    var random = Math.floor(Math.random() * Object.keys(submessages).length);
-    var message = submessages[random];
-    strArrayMessage = message.split(" ");
-    for(index = 0; index < strArrayMessage.length; index ++){
-        if(strArrayMessage[index].toLowerCase() == "user"){
-            strArrayMessage[index] = username;
+    try{
+        var submessages = config.Alerts.Submessages;
+        var random = Math.floor(Math.random() * Object.keys(submessages).length);
+        var message = submessages[random];
+        strArrayMessage = message.split(" ");
+        for(index = 0; index < strArrayMessage.length; index ++){
+            if(strArrayMessage[index].toLowerCase() == "user"){
+                strArrayMessage[index] = username;
+            }
         }
-    }
-    strArrayMessage = strArrayMessage.join(" ");
-    client.action(channelname, strArrayMessage);
+        strArrayMessage = strArrayMessage.join(" ");
+        client.action(channelname, strArrayMessage);
+    } catch { }
 });
 
 // Ban
 client.on("ban", (channel, username, reason) => {
-    var banmessages = config.Alerts.BanMessages;
-    var random = Math.floor(Math.random() * Object.keys(banmessages).length);
-    var message = banmessages[random];
-    strArrayMessage = message.split(" ");
-    for(index = 0; index < strArrayMessage.length; index ++){
-        if(strArrayMessage[index].toLowerCase() == "user"){
-            strArrayMessage[index] = username;
+    try{
+        var banmessages = config.Alerts.BanMessages;
+        var random = Math.floor(Math.random() * Object.keys(banmessages).length);
+        var message = banmessages[random];
+        strArrayMessage = message.split(" ");
+        for(index = 0; index < strArrayMessage.length; index ++){
+            if(strArrayMessage[index].toLowerCase() == "user"){
+                strArrayMessage[index] = username;
+            }
         }
-    }
-    strArrayMessage = strArrayMessage.join(" ");
-    client.action(channelname, strArrayMessage);    
+        strArrayMessage = strArrayMessage.join(" ");
+        client.action(channelname, strArrayMessage);    
+    } catch { }
 });
 
 // Commands
 client.on('chat', function(channel, user, message, self){   
     
     // Respond to user command using commands
-    if(config.Commands.hasOwnProperty(message)){
-        try{
-            client.action(channelname, config.Commands[message]);       
-        }catch(error){
-            console.log(error);
+    try{
+        if(config.Commands.hasOwnProperty(message)){
+            try{
+                client.action(channelname, config.Commands[message]);       
+            }catch(error){
+                console.log(error);
+            }
         }
-    }
-
+    } catch { }
+    
     // Replace exclamation point and create string array
     try{
         messageMinusExclamation = message.replace('/!/g','');
@@ -511,166 +530,197 @@ client.on('chat', function(channel, user, message, self){
 
     // Get Uptime
     if(strArray[0] === ("!uptime")){
-        getUpTime(); // TODO get object and post uptime to chat
+        try{
+            getUpTime(); // TODO get object and post uptime to chat
+        } catch { }
     }
     
     // Respond with Starcraft II opponent of streamer NOT FINISHED
     if(strArray[0] === ("!opponent")){
-        getOpponent();
+        try{
+            getOpponent();
+        } catch { }
     }
 
-    // Execute Replay renamer.py script
+    // Execute Replay Renamer.py script
     if(strArray[0] === ("!replaypack")){
-        if(user.username === channelname || user.username === channelname.toLowerCase()){
-        client.action(channelname, "Working on it");
-        PythonShell.run('renamer.py', null, function (err) {
-            if (err) throw err;
-            client.action(channelname, "Replaypack finished");
-          });
-        }
+        try{
+            if(user.username === channelname || user.username === channelname.toLowerCase()){
+                client.action(channelname, "Working on it");
+                PythonShell.run('Renamer.py', null, function (err) {
+                    if (err) throw err;
+                    client.action(channelname, "Replaypack finished");
+                  });
+                }
+        } catch { }
     }
 
     // Add command to commands
     if(strArray[0] === ("!add")){
-        if(user.username === channelname || user.username === channelname.toLowerCase()){
-            if (strArray.length < 3){
-                client.action(channelname, "Command format: \"!add !command message\"");
-            }
-            else if (strArray[1].charAt(0) == "!"){
-                var sentenceArray = strArray.slice(); // Clone array
-                sentenceArray.shift();
-                sentenceArray.shift();
-                config.Commands[strArray[1]] = sentenceArray.join(" ").toString();
-                fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
-                function finished(error){
-                    client.action(channelname, "command " + strArray[1] +" added");
+        try{
+            if(user.username === channelname || user.username === channelname.toLowerCase()){
+                if (strArray.length < 3){
+                    client.action(channelname, "Command format: \"!add !command message\"");
+                }
+                else if (strArray[1].charAt(0) == "!"){
+                    var sentenceArray = strArray.slice(); // Clone array
+                    sentenceArray.shift();
+                    sentenceArray.shift();
+                    config.Commands[strArray[1]] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    function finished(error){
+                        client.action(channelname, "command " + strArray[1] +" added");
+                    }
+                }
+                else{
+                    client.action(channelname, "Use an exclamation point at the start of the command you want to add");
                 }
             }
             else{
-                client.action(channelname, "Use an exclamation point at the start of the command you want to add");
+                client.action(channelname, "You can't tell me what to do");
             }
-        }
-        else{
-            client.action(channelname, "You can't tell me what to do");
-        }
+        } catch { }
     }
 
     // Remove command from commands
     if(strArray[0] === ("!remove")){
-        if(user.username === channelname.user || user.username === channelname.toLowerCase()){
-            if(strArray.length < 2 || strArray.length > 2){
-                client.action(channelname, "To remove a command, type \"!remove\"");
-            }
-            if(strArray.length === 2){
-                if(strArray[1].charAt(0) == "!"){
-                    delete config.Commands[strArray[1]];
-                    strConfig = JSON.stringify(config, null, 4);
-                    fs.writeFileSync("./config.json", strConfig, finished());
-                    function finished(error){
-                        client.action(channelname, "command " + strArray[1] +" removed");
+        try{
+            if(user.username === channelname.user || user.username === channelname.toLowerCase()){
+                if(strArray.length < 2 || strArray.length > 2){
+                    client.action(channelname, "To remove a command, type \"!remove\"");
+                }
+                if(strArray.length === 2){
+                    if(strArray[1].charAt(0) == "!"){
+                        delete config.Commands[strArray[1]];
+                        strConfig = JSON.stringify(config, null, 4);
+                        fs.writeFileSync("./config.json", strConfig, finished());
+                        function finished(error){
+                            client.action(channelname, "command " + strArray[1] +" removed");
+                        }
+                    }
+                    else{
+                        client.action(channelname, "Use an exclamation point at the start of the command you want to remove");
                     }
                 }
-                else{
-                    client.action(channelname, "Use an exclamation point at the start of the command you want to remove");
-                }
             }
-        }
-        else{
-            client.action(channelname, "You can't tell me what to do");
-        }
+            else{
+                client.action(channelname, "You can't tell me what to do");
+            }
+        } catch { }
     }
     
     // Add sub message
     if(strArray[0] === ("!addsub")){
-        if(user.username === channelname || user.username === channelname.toLowerCase()){
-            if (strArray.length < 2){
-                client.action(channelname, "To add a sub message type \"!addsub message here\"");
-            }
-            else if (strArray.length >= 2){
-                var sentenceArray = strArray.slice(); // Clone array
-                sentenceArray.shift();
-                keyvalue = Object.keys(config.Alerts.SubMessages).length;
-                config.Alerts.SubMessages[keyvalue] = sentenceArray.join(" ").toString();
-                fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
-                function finished(error){
-                    client.action(channelname, sentenceArray.join(" ") + " submessage added!");
+        try{
+            if(user.username === channelname || user.username === channelname.toLowerCase()){
+                if (strArray.length < 2){
+                    client.action(channelname, "To add a sub message type \"!addsub message here\"");
                 }
-            }   
-        }
-        else{
-            client.action(channelname, "You can't tell me what to do");
-        }
+                else if (strArray.length >= 2){
+                    var sentenceArray = strArray.slice(); // Clone array
+                    sentenceArray.shift();
+                    keyvalue = Object.keys(config.Alerts.SubMessages).length;
+                    config.Alerts.SubMessages[keyvalue] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    function finished(error){
+                        client.action(channelname, sentenceArray.join(" ") + " submessage added!");
+                    }
+                }   
+            }
+            else{
+                client.action(channelname, "You can't tell me what to do");
+            }
+        } catch { }
+        
     }
 
     // Add user ban message
     if(strArray[0] === ("!addban")){
-        if(user.username === channelname || user.username === channelname.toLowerCase()){
-            if (strArray.length < 2){
-                client.action(channelname, "To add a sub message type \"!addsub message here\"");
-            }
-            else if (strArray.length >= 2){
-                var sentenceArray = strArray.slice(); // Clone array
-                sentenceArray.shift();
-                keyvalue = Object.keys(config.Alerts.BanMessages).length;
-                config.Alerts.BanMessages[keyvalue] = sentenceArray.join(" ").toString();
-                fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
-                function finished(error){
-                    client.action(channelname, sentenceArray.join(" ") + " banmessage added!");
+        try{
+            if(user.username === channelname || user.username === channelname.toLowerCase()){
+                if (strArray.length < 2){
+                    client.action(channelname, "To add a sub message type \"!addsub message here\"");
                 }
-            }   
-        }
-        else{
-            client.action(channelname, "You can't tell me what to do");
-        }
+                else if (strArray.length >= 2){
+                    var sentenceArray = strArray.slice(); // Clone array
+                    sentenceArray.shift();
+                    keyvalue = Object.keys(config.Alerts.BanMessages).length;
+                    config.Alerts.BanMessages[keyvalue] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    function finished(error){
+                        client.action(channelname, sentenceArray.join(" ") + " banmessage added!");
+                    }
+                }   
+            }
+            else{
+                client.action(channelname, "You can't tell me what to do");
+            }
+        } catch { }
     }
 
     // Add periodic message 
     if(strArray[0] === ("!addmessage")){
-        if(user.username === channelname || user.username === channelname.toLowerCase()){
-            if (strArray.length < 2){
-                client.action(channelname, "To add a sub message type \"!addsub message here\"");
+        try{
+            if(user.username === channelname || user.username === channelname.toLowerCase()){
+                if (strArray.length < 2){
+                    client.action(channelname, "To add a sub message type \"!addsub message here\"");
+                }
+                else if (strArray.length >= 2){
+                }   
             }
-            else if (strArray.length >= 2){
-            }   
-        }
-        else{
-            client.action(channelname, "You can't tell me what to do");
-        }
+            else{
+                client.action(channelname, "You can't tell me what to do");
+            }
+        } catch { }
     }
 
     // Remove sub message
     if(strArray[0] === ("!removesub")){
+        try{
+
+        } catch { }
     }
 
     // Remove user ban message
     if(strArray[0] === ("!removeban")){
+        try{
+
+        } catch { }
     }
 
     // Remove periodic message 
     if(strArray[0] === ("!removemessage")){
+        try{
+
+        } catch { }
     }
 
     // Add message that appears every messageInterval
     if(strArray[0] === ("!shoutout")){
-        if(user.username === channelname || user.username === channelname.toLowerCase()){
-            if (strArray.length < 2){
-                client.action(channelname, "Shoutout who?");
+        try{
+            if(user.username === channelname || user.username === channelname.toLowerCase()){
+                if (strArray.length < 2){
+                    client.action(channelname, "Shoutout who?");
+                }
+                else if (strArray.length == 2){
+                    shoutout(strArray[1]);
+                }
             }
-            else if (strArray.length == 2){
-                shoutout(strArray[1]);
-            }
-        }
+        } catch { }
+        
     }
 
     // Add message that appears every messageInterval
     if(strArray[0] === ("!pirate")){
-        if (strArray.length < 2){
-            client.action(channelname, "To talk like a pirate type \"!pirate message here\"");
-        }
-        else if (strArray.length >= 2){
-            var sentenceArray = strArray.slice(); // Clone array
-            sentenceArray.shift();
-            client.action(channelname, pirateSpeak.translate(sentenceArray.join(" ")));
-        }   
+        try{
+            if (strArray.length < 2){
+                client.action(channelname, "To talk like a pirate type \"!pirate message here\"");
+            }
+            else if (strArray.length >= 2){
+                var sentenceArray = strArray.slice(); // Clone array
+                sentenceArray.shift();
+                client.action(channelname, pirateSpeak.translate(sentenceArray.join(" ")));
+            }   
+        } catch { }
     }
 });

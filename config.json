@@ -11,12 +11,10 @@
         },
         "Game": {
             "scid": [""],
-            "names": [
-                ""
-            ],
+            "names": [""],
             "path": "",
             "region": "",
-            "Winrates": {
+            "winrates": {
                 "pvp": "0-0",
                 "pvz": "0-0",
                 "pvt": "0-0"

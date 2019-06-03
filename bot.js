@@ -17,18 +17,13 @@ var config = require("./config.json");
 apikey = getBotAPI();
 botusername = getBotUsername();
 channelname = getChannelName();
+replaypath = getReplayPath();
 
 // twitch-api and game information
 var clientid = config.App.Channel.clientid;
 const accessToken = getAccessToken(clientid);
 twitchClient = twitchClient.withCredentials(clientid, accessToken); 
 sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
-
-var {PythonShell} = require('python-shell') // Allow the execution of python script
-PythonShell.run('Stats Updater.py', null, function (err) {
-    console.log("Recording records..")
-    if (err) throw err;
-  });
 
 // Twitch Information
 var options = {
@@ -55,6 +50,30 @@ var messageInterval = {
       this.time = value * 60000;
     }
 };
+
+// If botusername is empty, ask user for bot username and write to file
+function getReplayPath(){
+    var path = config.App.Game.path;
+    console.log(config.App.Game.path);
+    if(path !== "" && path !== undefined){
+        return path.replace(/\\/g, "/");
+    }
+    else{
+        path = readline.question("What is the path of your Starcraft II replay folder?");
+        config.App.Game.path = path.replace(/\\/g, "/");
+        fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            console.log("Path saved. If you made a mistake, you can change it later in config.json");
+            }); 
+            try{
+                return config.App.Game.path;
+            }catch(err){
+                console.log(err);
+            }
+    }
+}
 
 // If botusername is empty, ask user for bot username and write to file
 function getBotUsername(){
@@ -375,6 +394,12 @@ var client = new tmi.client(options);
 
 client.connect(channelname); 
 
+var {PythonShell} = require('python-shell') // Allow the execution of python script
+PythonShell.run('Stats Updater.py', null, function (err) {
+    console.log("Recording records..")
+    if (err) throw err;
+  });
+
 //client.on('ping', () => console.log('[PING] Received ping.'));
 function printCommands(){
     commands = config.Commands;
@@ -465,7 +490,7 @@ client.on("ban", (channel, username, reason) => {
 });
 
 // Commands
-client.on('chat', function(channel, user, message, self){
+client.on('chat', function(channel, user, message, self){   
     
     // Respond to user command using commands
     if(config.Commands.hasOwnProperty(message)){

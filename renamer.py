@@ -13,8 +13,9 @@ with open('config.json') as data_file:
 
 sc2replaypath = data["App"]["Game"]["path"]
 path = os.getcwd() + "/replays/"
+id = []
+id.append(data["App"]["Game"]["scid"])
 
-id = data["App"]["Game"]["scid"]
 region = ""
 players = []
 races = []

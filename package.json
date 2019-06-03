@@ -1,22 +1,27 @@
 {
-  "name": "OcularPatdownBot",
+  "name": "ocularpatdownbot",
   "version": "1.0.0",
-  "description": "Twitch Bot",
+  "description": "Flexible Twitch Bot for use with Starcraft II. Utilized by professional Starcraft players to enhance the viewers' experience.",
   "main": "bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Robert Plata",
-  "license": "ISC",
-  "dependencies": {
-    "get-json": "^1.0.1",
-    "opn": "^5.4.0",
-    "readline-sync": "^1.4.9",
-    "tmi.js": "^1.3.1",
-    "twitch": "^1.3.2",
-    "twitch-chat-client": "^1.3.4"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RobbiePlata/OcularPatdownBot.git"
   },
-  "devDependencies": {
-    "cross-env": "^5.2.0"
-  }
+  "author": "Robbie Plata",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RobbiePlata/OcularPatdownBot/issues"
+  },
+  "dependencies": {
+    "tmi.js": "1.4.2",
+    "twitch": "2.2.5",
+    "readline-sync": "1.4.9",
+    "pirate-speak": "1.0.1",
+    "python-shell": "1.0.7",
+    "opn": "6.0.0"
+  },
+  "homepage": "https://github.com/RobbiePlata/OcularPatdownBot#readme"
 }

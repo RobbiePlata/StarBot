@@ -20,11 +20,11 @@ Access the directory of your bot from the command prompt
 ```
 cd C:\Users\Robbie Plata\Documents\OcularPatdownBot
 ```
-To install all required files just type the following command to install all package dependencies:
+Install node dependencies:
 ```
 npm install
 ```
-To install dependencies of renamer.py used for zipping replaypacks
+Install python dependencies
 ```
 pip install -r requirements.txt
 Change renamer.py sc2replaypath to your replays folder in the my documents Starcraft II location
@@ -33,14 +33,11 @@ Change renamer.py sc2replaypath to your replays folder in the my documents Starc
 When using this bot it is recommended that you uncheck the QuickEditMode option for the batch file so the application does not pause when you select anything in the console. To do this, left click the command prompt icon on the top left of the console. Select Defaults->Options then uncheck QuickEdit Mode.
 ## Deployment
 
-Launch the bot using the run.bat file.
-Follow all of the instructions in the command prompt.
-If any of the information that you entered into the bot
-was incorrect, simply delete any information you incorrectly enteredin the directory 
-of your bot, and relaunch the application.
+Launch the bot using
 ```
-i.e. Incorrectly typed your botapi? Open botapi.txt and delete the contents inside.
+Node bot.js
 ```
+
 ## Built With
 
 * [Node.js](https://nodejs.org/en/)

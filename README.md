@@ -1,5 +1,5 @@
 # OcularPatdownBot
-An It's Always Sunny in Philadelphia themed TwitchBot using Node.js
+TwitchBot using Node.js
 
 ## Getting Started
 

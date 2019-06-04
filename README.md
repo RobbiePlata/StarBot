@@ -24,22 +24,6 @@ To install all required files just type the following command to install all pac
 ```
 npm install
 ```
-OR Copy and enter the following commands line by line:
-```
-npm install get-json
-```
-```
-npm install opn
-```
-```
-npm install readline-sync
-```
-```
-npm i tmi.js --save
-```
-```
-npm install --save twitch
-```
 To install dependencies of renamer.py used for zipping replaypacks
 ```
 pip install -r requirements.txt
@@ -60,6 +44,8 @@ i.e. Incorrectly typed your botapi? Open botapi.txt and delete the contents insi
 ## Built With
 
 * [Node.js](https://nodejs.org/en/)
+
+* [Python](https://www.python.org/)
 
 ## Author
 

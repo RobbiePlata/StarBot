@@ -1,4 +1,4 @@
-![alt text](https://imgur.com/a/tWeBIiy)
+![StarBot](https://i.imgur.com/mVTwNhW.png)
 
 # StarBot
 TwitchBot using Node.js

@@ -50,4 +50,4 @@ Node bot.js
 
 * Thanks to UpATreeZelda for the recommendation to build this bot
 * Users and bugtesters
-Harstem, Puckk
+Harstem, Puckk, Goblin, Uthermal

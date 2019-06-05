@@ -20,12 +20,9 @@ Access the directory of your bot from the command prompt
 ```
 cd C:\Users\Robbie Plata\Documents\OcularPatdownBot
 ```
-Install node dependencies:
+Install Node and Python dependencies:
 ```
 npm install
-```
-Install python dependencies
-```
 pip install -r requirements.txt
 ```
 

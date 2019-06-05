@@ -1,4 +1,4 @@
-# OcularPatdownBot
+# StarBot
 TwitchBot using Node.js
 
 ## Getting Started

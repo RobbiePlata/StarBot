@@ -9,7 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-An install of node.js using the Node.js Setup wizard.
+An install of Node.js and Python with environment variables path included.
 A TwitchTV name for your bot to use.
 A TwitchTV channel for your bot to stay at.
 

@@ -1,4 +1,4 @@
-﻿/// Robert Plata
+﻿    /// Robert Plata
 /// Latest 6.2.2019 11:55pm
 /// Flexible Twitch Bot for use with Starcraft II
 /// Utilized by professional Starcraft players to enhance the viewers' experience
@@ -56,7 +56,6 @@ var messageInterval = {
 // If botusername is empty, ask user for bot username and write to file
 function getReplayPath(){
     var path = config.App.Game.path;
-    console.log(config.App.Game.path);
     if(path !== "" && path !== undefined){
         return path.replace(/\\/g, "/");
     }
@@ -84,7 +83,7 @@ function getBotUsername(){
         return botusername;
     }
     else{
-        bot = readline.question("What is your bot's twitch username?");
+        bot = readline.question("Bot's Username: ");
         config.App.Bot.name = bot;
         fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
             if(err) {
@@ -122,7 +121,7 @@ function getAccessToken(){
 // Open web browser for authentication token retrieval
 function userTokenRetreival(){
     var opn = require('opn');
-        opn("https://twitchtokengenerator.com/", {
+        opn("https://twitch.center/token", {
         wait: true
     }).then(function(cp) {
         //console.log('child process:',cp);
@@ -134,7 +133,7 @@ function userTokenRetreival(){
 
 // Write authentication token to file
 function writeAccessToken(){
-    var key = readline.question("What is main channel's authentication key?");
+    var key = readline.question("Check all scopes, generate token, then enter the code here: ");
     config.App.Channel.accessToken = key;
         fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
             if(err) {
@@ -156,7 +155,7 @@ function getChannelName(){
         return channelname;
     }
     else{
-        name = readline.question("What is your stream channel?");
+        name = readline.question("Enter your stream channel: ");
         config.App.Channel.name = name;
         fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
             if(err) {
@@ -193,8 +192,7 @@ function getBotAPI(){
     }
     else{
         botAPIRetrieval();
-        console.log("A window as been launched to retrieve your key");
-        api = readline.question("What is your bot's oath key?");
+        api = readline.question("Enter your Bot's Oauth key: ");
         config.App.Bot.apikey = api;
         fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
             if(err) {

@@ -10,9 +10,9 @@ with open('config.json') as data_file:
 path = os.getcwd() + "/replays/"
 
 names = data["App"]["Game"]["names"]
-pvz = 0
-pvt = 0
-pvp = 0
+VsZerg = 0
+VsTerran = 0
+VsProtoss = 0
 
 go = True
 sc2replaypath = data["App"]["Game"]["path"]
@@ -34,93 +34,90 @@ def process(replay):
     try:
         if winner in names:
             if loserrace == "Terran":
-                readpvtfile = open("pvt.txt", "r")
-                pvt = readpvtfile.read()
-                wins = int(pvt.split('-')[0])
-                losses = int(pvt.split('-')[1])
-                readpvtfile.close()
-                writepvtfile = open("pvt.txt", "w")
+                readVsTerranfile = open("VsTerran.txt", "r")
+                VsTerran = readVsTerranfile.read()
+                wins = int(VsTerran.split('-')[0])
+                losses = int(VsTerran.split('-')[1])
+                readVsTerranfile.close()
+                writeVsTerranfile = open("VsTerran.txt", "w")
                 wins = wins + 1
-                writepvtfile.write(str(wins) + '-' + str(losses))
+                writeVsTerranfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
-                writepvtfile.close()
+                writeVsTerranfile.close()
 
             if loserrace == "Zerg":
-                readpvzfile = open("pvz.txt", "r")
-                pvz = readpvzfile.read()
-                wins = int(pvz.split('-')[0])
-                losses = int(pvz.split('-')[1])
-                readpvzfile.close()
-                writepvzfile = open("pvz.txt", "w")
+                readVsZergfile = open("VsZerg.txt", "r")
+                VsZerg = readVsZergfile.read()
+                wins = int(VsZerg.split('-')[0])
+                losses = int(VsZerg.split('-')[1])
+                readVsZergfile.close()
+                writeVsZergfile = open("VsZerg.txt", "w")
                 wins = wins + 1
-                writepvzfile.write(str(wins) + '-' + str(losses))
+                writeVsZergfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
-                writepvzfile.close()
+                writeVsZergfile.close()
 
             if loserrace == "Protoss":
-                readpvpfile = open("pvp.txt", "r")
-                pvp = readpvpfile.read()
-                wins = int(pvp.split('-')[0])
-                losses = int(pvp.split('-')[1])
-                readpvpfile.close()
-                writepvpfile = open("pvp.txt", "w")
+                readVsProtossfile = open("VsProtoss.txt", "r")
+                VsProtoss = readVsProtossfile.read()
+                wins = int(VsProtoss.split('-')[0])
+                losses = int(VsProtoss.split('-')[1])
+                readVsProtossfile.close()
+                writeVsProtossfile = open("VsProtoss.txt", "w")
                 wins = wins + 1
-                writepvpfile.write(str(wins) + '-' + str(losses))
+                writeVsProtossfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
-                writepvpfile.close()
+                writeVsProtossfile.close()
 
         else:
             if winnerrace == "Terran":
-                readpvtfile = open("pvt.txt", "r")
-                pvt = readpvtfile.read()
-                wins = int(pvt.split('-')[0])
-                losses = int(pvt.split('-')[1])
-                readpvtfile.close()
-                writepvtfile = open("pvt.txt", "w")
+                readVsTerranfile = open("VsTerran.txt", "r")
+                VsTerran = readVsTerranfile.read()
+                wins = int(VsTerran.split('-')[0])
+                losses = int(VsTerran.split('-')[1])
+                readVsTerranfile.close()
+                writeVsTerranfile = open("VsTerran.txt", "w")
                 losses = losses + 1
-                writepvtfile.write(str(wins) + '-' + str(losses))
+                writeVsTerranfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
-                writepvtfile.close()
+                writeVsTerranfile.close()
 
             if winnerrace == "Zerg":
-                readpvzfile = open("pvz.txt", "r")
-                pvz = readpvzfile.read()
-                wins = int(pvz.split('-')[0])
-                losses = int(pvz.split('-')[1])
-                readpvzfile.close()
-                writepvzfile = open("pvz.txt", "w")
+                readVsZergfile = open("VsZerg.txt", "r")
+                VsZerg = readVsZergfile.read()
+                wins = int(VsZerg.split('-')[0])
+                losses = int(VsZerg.split('-')[1])
+                readVsZergfile.close()
+                writeVsZergfile = open("VsZerg.txt", "w")
                 losses = losses + 1
-                writepvzfile.write(str(wins) + '-' + str(losses))
+                writeVsZergfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
-                writepvzfile.close()
+                writeVsZergfile.close()
 
             if winnerrace == "Protoss":
-                readpvpfile = open("pvp.txt", "r")
-                pvp = readpvpfile.read()
-                wins = int(pvp.split('-')[0])
-                losses = int(pvp.split('-')[1])
-                readpvpfile.close()
-                writepvpfile = open("pvp.txt", "w")
+                readVsProtossfile = open("VsProtoss.txt", "r")
+                VsProtoss = readVsProtossfile.read()
+                wins = int(VsProtoss.split('-')[0])
+                losses = int(VsProtoss.split('-')[1])
+                readVsProtossfile.close()
+                writeVsProtossfile = open("VsProtoss.txt", "w")
                 losses = losses + 1
-                writepvpfile.write(str(wins) + '-' + str(losses))
+                writeVsProtossfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
-                writepvpfile.close()
+                writeVsProtossfile.close()
 
     except Exception as err:
         print(err)
 
-#TODO -- Write this to config.json instead of text files.
-#ALSO -- Add every possible matchup to this and config.json
-
-writepvtfile = open("pvt.txt", "w")
-writepvzfile = open("pvz.txt", "w")
-writepvpfile = open("pvp.txt", "w")
-writepvtfile.write("0-0")
-writepvzfile.write("0-0")
-writepvpfile.write("0-0")
-writepvtfile.close()
-writepvzfile.close()
-writepvpfile.close()
+writeVsTerranfile = open("VsTerran.txt", "w")
+writeVsZergfile = open("VsZerg.txt", "w")
+writeVsProtossfile = open("VsProtoss.txt", "w")
+writeVsTerranfile.write("0-0")
+writeVsZergfile.write("0-0")
+writeVsProtossfile.write("0-0")
+writeVsTerranfile.close()
+writeVsZergfile.close()
+writeVsProtossfile.close()
 
 while(go):
     path, dirs, files = next(os.walk(sc2replaypath))

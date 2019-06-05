@@ -1,3 +1,5 @@
+![alt text](https://imgur.com/a/tWeBIiy)
+
 # StarBot
 TwitchBot using Node.js
 

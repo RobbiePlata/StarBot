@@ -17,7 +17,6 @@ VsProtoss = 0
 go = True
 sc2replaypath = data["App"]["Game"]["path"]
 
-
 def process(replay):
     winner = ""
     winnerrace = ""
@@ -34,36 +33,36 @@ def process(replay):
     try:
         if winner in names:
             if loserrace == "Terran":
-                readVsTerranfile = open("VsTerran.txt", "r")
+                readVsTerranfile = open("Statistics/VsTerran.txt", "r")
                 VsTerran = readVsTerranfile.read()
                 wins = int(VsTerran.split('-')[0])
                 losses = int(VsTerran.split('-')[1])
                 readVsTerranfile.close()
-                writeVsTerranfile = open("VsTerran.txt", "w")
+                writeVsTerranfile = open("Statistics/VsTerran.txt", "w")
                 wins = wins + 1
                 writeVsTerranfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
                 writeVsTerranfile.close()
 
             if loserrace == "Zerg":
-                readVsZergfile = open("VsZerg.txt", "r")
+                readVsZergfile = open("Statistics/VsZerg.txt", "r")
                 VsZerg = readVsZergfile.read()
                 wins = int(VsZerg.split('-')[0])
                 losses = int(VsZerg.split('-')[1])
                 readVsZergfile.close()
-                writeVsZergfile = open("VsZerg.txt", "w")
+                writeVsZergfile = open("Statistics/VsZerg.txt", "w")
                 wins = wins + 1
                 writeVsZergfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
                 writeVsZergfile.close()
 
             if loserrace == "Protoss":
-                readVsProtossfile = open("VsProtoss.txt", "r")
+                readVsProtossfile = open("Statistics/VsProtoss.txt", "r")
                 VsProtoss = readVsProtossfile.read()
                 wins = int(VsProtoss.split('-')[0])
                 losses = int(VsProtoss.split('-')[1])
                 readVsProtossfile.close()
-                writeVsProtossfile = open("VsProtoss.txt", "w")
+                writeVsProtossfile = open("Statistics/VsProtoss.txt", "w")
                 wins = wins + 1
                 writeVsProtossfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
@@ -71,36 +70,36 @@ def process(replay):
 
         else:
             if winnerrace == "Terran":
-                readVsTerranfile = open("VsTerran.txt", "r")
+                readVsTerranfile = open("Statistics/VsTerran.txt", "r")
                 VsTerran = readVsTerranfile.read()
                 wins = int(VsTerran.split('-')[0])
                 losses = int(VsTerran.split('-')[1])
                 readVsTerranfile.close()
-                writeVsTerranfile = open("VsTerran.txt", "w")
+                writeVsTerranfile = open("Statistics/VsTerran.txt", "w")
                 losses = losses + 1
                 writeVsTerranfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
                 writeVsTerranfile.close()
 
             if winnerrace == "Zerg":
-                readVsZergfile = open("VsZerg.txt", "r")
+                readVsZergfile = open("Statistics/VsZerg.txt", "r")
                 VsZerg = readVsZergfile.read()
                 wins = int(VsZerg.split('-')[0])
                 losses = int(VsZerg.split('-')[1])
                 readVsZergfile.close()
-                writeVsZergfile = open("VsZerg.txt", "w")
+                writeVsZergfile = open("Statistics/VsZerg.txt", "w")
                 losses = losses + 1
                 writeVsZergfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
                 writeVsZergfile.close()
 
             if winnerrace == "Protoss":
-                readVsProtossfile = open("VsProtoss.txt", "r")
+                readVsProtossfile = open("Statistics/VsProtoss.txt", "r")
                 VsProtoss = readVsProtossfile.read()
                 wins = int(VsProtoss.split('-')[0])
                 losses = int(VsProtoss.split('-')[1])
                 readVsProtossfile.close()
-                writeVsProtossfile = open("VsProtoss.txt", "w")
+                writeVsProtossfile = open("Statistics/VsProtoss.txt", "w")
                 losses = losses + 1
                 writeVsProtossfile.write(str(wins) + '-' + str(losses))
                 print(str(wins) + '-' + str(losses))
@@ -109,9 +108,9 @@ def process(replay):
     except Exception as err:
         print(err)
 
-writeVsTerranfile = open("VsTerran.txt", "w")
-writeVsZergfile = open("VsZerg.txt", "w")
-writeVsProtossfile = open("VsProtoss.txt", "w")
+writeVsTerranfile = open("Statistics/VsTerran.txt", "w")
+writeVsZergfile = open("Statistics/VsZerg.txt", "w")
+writeVsProtossfile = open("Statistics/VsProtoss.txt", "w")
 writeVsTerranfile.write("0-0")
 writeVsZergfile.write("0-0")
 writeVsProtossfile.write("0-0")

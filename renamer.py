@@ -8,11 +8,19 @@ import shutil
 import datetime as dt
 import json
 
+#TODO Create /temp/ folder for replays to process then delete it when finished
+if (os.path.isdir("temp") == True):
+    shutil.rmtree('temp')
+    print("temp folder removed")
+
+os.mkdir('temp')
+print("temp folder created")
+
 with open('config.json') as data_file:
     data = json.load(data_file)
 
 sc2replaypath = data["App"]["Game"]["path"]
-path = os.getcwd() + "/replays/"
+path = os.getcwd() + "/temp/"
 id = []
 id.append(data["App"]["Game"]["scid"])
 
@@ -47,9 +55,15 @@ def processReplays():
         zipf = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
         zipdir(path, zipf)
         zipf.close()
-        print(os.getcwd() + '/' + zipname)
+        print('Zipped')
+        shutil.rmtree('temp')   
+        if(os.path.isfile(os.environ['USERPROFILE'] + '\Desktop' + "\\" + zipname)):
+            os.remove(os.environ['USERPROFILE'] + '\Desktop' + "\\" + zipname)
+            print("Replacing file that already exists in the target directory")
+        #print(os.getcwd() + '/' + zipname)
         shutil.move(os.getcwd() + "\\" + zipname, os.environ['USERPROFILE'] + '\Desktop')
-        print('zipped')
+        print("Creation Successful")
+        
     except Exception as err:
         print(err)
 
@@ -81,7 +95,7 @@ def getRatings(name1, name2, race1, race2):
     global ratings
     player1search = "http://sc2unmasked.com/API/Player?name=" + name1 + "&server=" + region + "&race=" + race1.lower()
     player2search = "http://sc2unmasked.com/API/Player?name=" + name2 + "&server=" + region + "&race=" + race2.lower()
-    print(region)
+    print("Region: " + region)
     print(player1search)
     print(player2search)
     player1 = getMMR(player1search, name1, race1)
@@ -105,7 +119,7 @@ def getMMR(playersearch, name, race):
     try:
         playerdata = request.json()
     except Exception as ex:
-        print("If it took too long its probably a barcode")
+        print("This one doesn't exist or they are a dirty barcode player")
         print(ex)
         return 'Unknown'
     if playerdata:
@@ -123,7 +137,7 @@ def getMMR(playersearch, name, race):
 
 # Create new Replay String
 def createReplayString(datePlayed, mapname):
-    print(mapname)
+    print("Map: " + mapname)
     if players[0] == players[1]:
         if players[0] in id:
             return mapname +' (real) ' + players[0] + ' (' + races[0] + '), ' + str(ratings[0]) + ' MMR' + ' vs ' + players[1] + ' (' + races[1] + '), ' + str(ratings[1]) + ' MMR'

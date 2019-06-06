@@ -108,12 +108,14 @@ def process(replay):
     except Exception as err:
         print(err)
 
+if (os.path.isdir("Statistics")):
+    print("Statistics folder exists")
+else:
+    os.mkdir("Statistics")
+    
 writeVsTerranfile = open("Statistics/VsTerran.txt", "w")
 writeVsZergfile = open("Statistics/VsZerg.txt", "w")
 writeVsProtossfile = open("Statistics/VsProtoss.txt", "w")
-writeVsTerranfile.write("0-0")
-writeVsZergfile.write("0-0")
-writeVsProtossfile.write("0-0")
 writeVsTerranfile.close()
 writeVsZergfile.close()
 writeVsProtossfile.close()

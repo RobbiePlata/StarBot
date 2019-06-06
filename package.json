@@ -21,7 +21,8 @@
     "readline-sync": "1.4.9",
     "pirate-speak": "1.0.1",
     "python-shell": "1.0.7",
-    "opn": "6.0.0"
+    "opn": "6.0.0",
+    "pkg": "4.3.7"
   },
   "homepage": "https://github.com/RobbiePlata/OcularPatdownBot#readme"
 }

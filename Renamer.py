@@ -9,6 +9,7 @@ import datetime as dt
 import json
 
 #TODO Create /temp/ folder for replays to process then delete it when finished
+
 if (os.path.isdir("temp") == True):
     shutil.rmtree('temp')
     print("temp folder removed")
@@ -51,7 +52,7 @@ def processReplays():
         except Exception as err:
             print("A non 1v1 can't be processed.", str(err))
     try:
-        zipname = "Rob ReplayPack " + str(datetime.datetime.now().month) + '-' + str(datetime.datetime.now().day) + '-' + str(datetime.datetime.now().year) + ".zip";
+        zipname = data["App"]["Game"]["names"][0] + "ReplayPack " + str(datetime.datetime.now().month) + '-' + str(datetime.datetime.now().day) + '-' + str(datetime.datetime.now().year) + ".zip";
         zipf = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
         zipdir(path, zipf)
         zipf.close()

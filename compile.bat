@@ -1,2 +1,2 @@
 @echo on
-pkg bot.js
+pkg bot.js & ResourceHacker.exe -open bot-win.exe -save temp.exe -action delete -mask ICONGROUP,, & ResourceHacker.exe -open temp.exe -save StarBot.exe -action addskip -res icon.ico -mask ICONGROUP,MAINICON,

@@ -16,11 +16,11 @@ A TwitchTV channel for your bot to stay at.
 ### Installing
 In windows, open a command prompt in the directory of the bot
 ```
-Directory e.g. C:\Users\Robbie Plata\Documents\OcularPatdownBot
+Directory e.g. C:\Users\Robbie Plata\Documents\StarBot
 ```
 Access the directory of your bot from the command prompt
 ```
-cd C:\Users\Robbie Plata\Documents\OcularPatdownBot
+cd C:\Users\Robbie Plata\Documents\StarBot
 ```
 Install Node and Python dependencies:
 ```
@@ -35,6 +35,8 @@ Launch the bot using
 ```
 Node bot.js
 ```
+Compile the bot using 'install.bat' <br>
+Delete files not used by compiled program using 'cleanup.bat'
 
 ## Built With
 
@@ -48,6 +50,6 @@ Node bot.js
 
 ## Acknowledgments
 
-* Thanks to UpATreeZelda for the recommendation to build this bot
+* Thanks to UpATreeZelda for the inspiration
 * Users and bugtesters
-Harstem, Puckk, Goblin, Uthermal
+Harstem, Puckk, Goblin, uThermal, Future

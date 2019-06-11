@@ -1,2 +1,0 @@
-@echo on
-pip install -r requirements.txt & npm install & pkg bot.js & ResourceHacker.exe -open bot-win.exe -save temp.exe -action delete -mask ICONGROUP,, & ResourceHacker.exe -open temp.exe -save StarBot.exe -action addskip -res icon.ico -mask ICONGROUP,MAINICON, & del temp.exe & del bot-win.exe & del bot-linux & del bot-macos

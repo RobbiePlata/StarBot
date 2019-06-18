@@ -1,11 +1,11 @@
-﻿    /// Robert Plata
+﻿/// Robert Plata
 /// Latest 6.2.2019 11:55pm
 /// Flexible Twitch Bot for use with Starcraft II
 /// Utilized by professional Starcraft players to enhance the viewers' experience
 
 // Dependencies
 tmi = require('tmi.js');
-twitchClient = require('twitch').default;
+TwitchClient = require('twitch').default;
 fs = require('fs');
 var readline = require('readline-sync');
 var pirateSpeak = require('pirate-speak');
@@ -20,12 +20,13 @@ channelname = getChannelName();
 replaypath = getReplayPath();
 
 // twitch-api and game information
-try{
-    var clientid = config.App.Channel.clientid;
-    const accessToken = getAccessToken(clientid);
-    twitchClient = twitchClient.withCredentials(clientid, accessToken); 
-    sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
-} catch { }
+
+var clientid = config.App.Channel.clientid;
+const accessToken = getAccessToken(clientid);
+(async() => {
+    twitchClient = await TwitchClient.withCredentials(clientid, accessToken); 
+})();
+sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
 
 // Twitch Information
 var options = {
@@ -210,17 +211,17 @@ function getBotAPI(){
 
 // Check if stream is live
 async function isStreamLive(userName) {
-	const user = await twitchClient.users.getUserByName(userName);
+	const user = await twitchClient.helix.users.getUserByName(userName);
 	if (!user) {
 		return false;
 	}
-	return await user.getStream() !== null;
+	return user.getStream();
 }
 
 // Get uptime using the current time minus the startDate of stream (in milliseconds) then convert to standard time form
 async function getUpTime(){
     if (await isStreamLive(channelname)){
-        const user = await twitchClient.users.getUserByName(channelname);
+        const user = await twitchClient.helix.users.getUserByName(channelname);
         const stream = await user.getStream();
         var start = stream.startDate; // Start date
         var currentTime = new Date(); // Current time
@@ -263,23 +264,6 @@ function convertUptime(milliseconds) {
         minutes: minutes,
         seconds: seconds
     };
-}
-
-// Give me advice
-async function advice(){
-    https = require('https');
-    var adviceapi = "https://api.adviceslip.com/advice";
-    https.get(adviceapi, (resp) => {
-        resp.on('data', (chunk) => {
-            data = JSON.parse(chunk);
-        });
-        resp.on('end', () => {
-            console.log(data.slip.advice);
-            client.action(channelname, data.slip.advice);
-        }).on("error", (err) => {
-            client.action(channelname, "No advice for you");
-          });
-        });
 }
 
 async function shoutout(name){

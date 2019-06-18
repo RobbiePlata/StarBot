@@ -24,7 +24,7 @@ replaypath = getReplayPath();
 var clientid = config.App.Channel.clientid;
 const accessToken = getAccessToken(clientid);
 (async() => {
-    twitchClient = await TwitchClient.withCredentials(clientid, accessToken); 
+    client = await TwitchClient.withCredentials(clientid, accessToken); 
 })();
 sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
 
@@ -211,7 +211,7 @@ function getBotAPI(){
 
 // Check if stream is live
 async function isStreamLive(userName) {
-	const user = await twitchClient.helix.users.getUserByName(userName);
+	const user = await client.helix.users.getUserByName(userName);
 	if (!user) {
 		return false;
 	}
@@ -221,30 +221,30 @@ async function isStreamLive(userName) {
 // Get uptime using the current time minus the startDate of stream (in milliseconds) then convert to standard time form
 async function getUpTime(){
     if (await isStreamLive(channelname)){
-        const user = await twitchClient.helix.users.getUserByName(channelname);
-        const stream = await user.getStream();
+        const user = await client.helix.users.getUserByName(channelname);
+        const stream = user.getStream();
         var start = stream.startDate; // Start date
         var currentTime = new Date(); // Current time
         msdifference = (currentTime - start); // Difference
         output = convertUptime(msdifference);
         if(output.day === 0 && output.hour === 0 && output.minutes === 0){
-            client.action(channelname, channelname + " has been live for " + output.seconds + " seconds");
+            chat.action(channelname, channelname + " has been live for " + output.seconds + " seconds");
         }
         else if(output.day === 0 && output.hour === 0){
-            client.action(channelname, channelname + " has been live for " + output.minutes + " minutes " + output.seconds + " seconds");
+            chat.action(channelname, channelname + " has been live for " + output.minutes + " minutes " + output.seconds + " seconds");
         }
         else if(output.day === 0){
-            client.action(channelname, channelname + " has been live for " + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
+            chat.action(channelname, channelname + " has been live for " + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
         }
         else if(output.day === 1){
-            client.action(channelname, channelname + " has been live for " + output.day + " day " + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
+            chat.action(channelname, channelname + " has been live for " + output.day + " day " + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
         }
         else{
-            client.action(channelname, channelname + " has been live for " + output.day + " days" + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
+            chat.action(channelname, channelname + " has been live for " + output.day + " days" + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
         }
     }
     else{
-        client.action(channelname, "Stream is not live");
+        chat.action(channelname, "Stream is not live");
     }
 }
 
@@ -269,12 +269,12 @@ function convertUptime(milliseconds) {
 async function shoutout(name){
     try{
         if(await isStreamLive(name)){
-            const user = await twitchClient.users.getUserByName(name);
+            const user = await client.users.getUserByName(name);
             const channel = await user.getChannel();
-            client.action(channelname, "Give " + channel.displayName + " a follow at twitch.tv/" + channel.displayName + " They're live right now playing " + channel.game);
+            chat.action(channelname, "Give " + channel.displayName + " a follow at twitch.tv/" + channel.displayName + " They're live right now playing " + channel.game);
         }
         else{
-            client.action(channelname, "Give " + name + " a follow at twitch.tv/" + name);
+            chat.action(channelname, "Give " + name + " a follow at twitch.tv/" + name);
         }
     } catch (err) { console.log(err) }
 }
@@ -345,17 +345,17 @@ async function getOpponent(){
                     player1race = getMatchup(player1.race);
                     player2 = players[1];
                     player2race = getMatchup(player2.race);
-                    client.action(channelname, player1.name + " (" + player1race + "), " + mmr1 + " MMR" + " VS " + player2.name + " (" + player2race  + "), " + mmr2 + " MMR");
+                    chat.action(channelname, player1.name + " (" + player1race + "), " + mmr1 + " MMR" + " VS " + player2.name + " (" + player2race  + "), " + mmr2 + " MMR");
                 }
                 else{
-                    client.action(channelname, channelname + " is in not in a game, or is in a replay");
+                    chat.action(channelname, channelname + " is in not in a game, or is in a replay");
                 }
             });
         });
         
         }).on("error", (err) => {
           console.log("Starcraft needs to be open");
-          client.action(channelname, "StarCraft must be open");
+          chat.action(channelname, "StarCraft must be open");
         });
 }
 
@@ -374,9 +374,9 @@ function getMatchup(race){
 }
 
 // Connect to channel
-var client = new tmi.client(options);
+var chat = new tmi.client(options);
 
-client.connect(channelname); 
+chat.connect(channelname); 
 
 try{
     var {PythonShell} = require('python-shell') // Allow the execution of python script
@@ -406,10 +406,10 @@ function printCommands(){
 };
 
 // Welcome Message
-client.on('connected', function(address, port) {
+chat.on('connected', function(address, port) {
     try{
         console.log("Welcome " + channelname + ", " + botusername + " is online!\n");
-        client.action(channelname, "o7");
+        chat.action(channelname, "o7");
         printCommands();
     } catch { }
 });
@@ -420,11 +420,11 @@ try{
     setInterval(() => {
         messages = config.Alerts.Messages // (Allow newly added commands to be recognized every interval)
         if(count <= Object.keys(messages).length - 1){
-            client.action(channelname, config.Alerts.Messages[count]);
+            chat.action(channelname, config.Alerts.Messages[count]);
         }
         else{
             count = 0;
-            client.action(channelname, config.Alerts.Messages[count]);
+            chat.action(channelname, config.Alerts.Messages[count]);
         }
         count = count + 1;
     }, messageInterval.interval); 
@@ -432,12 +432,12 @@ try{
 
 
 // Hosted
-client.on("hosted", (channel, username, viewers, autohost) => {
-    client.action(channelname, "\"IM CULTIVATING MASS\"")
+chat.on("hosted", (channel, username, viewers, autohost) => {
+    chat.action(channelname, "\"IM CULTIVATING MASS\"")
 });
 
 // Subscription
-client.on("subscription", function (channel, username, message, userstate) {
+chat.on("subscription", function (channel, username, message, userstate) {
     try{
         var submessages = config.Alerts.Submessages;
         var random = Math.floor(Math.random() * Object.keys(submessages).length);
@@ -450,12 +450,12 @@ client.on("subscription", function (channel, username, message, userstate) {
             }
         }
         strArrayMessage = strArrayMessage.join(" ");
-        client.action(channelname, strArrayMessage);
+        chat.action(channelname, strArrayMessage);
     } catch { }
 });
 
 // Resub
-client.on("resub", function (channel, username, months, message) {
+chat.on("resub", function (channel, username, months, message) {
     try{
         var submessages = config.Alerts.Submessages;
         var random = Math.floor(Math.random() * Object.keys(submessages).length);
@@ -467,12 +467,12 @@ client.on("resub", function (channel, username, months, message) {
             }
         }
         strArrayMessage = strArrayMessage.join(" ");
-        client.action(channelname, strArrayMessage);
+        chat.action(channelname, strArrayMessage);
     } catch { }
 });
 
 // Ban
-client.on("ban", (channel, username, reason) => {
+chat.on("ban", (channel, username, reason) => {
     try{
         var banmessages = config.Alerts.BanMessages;
         var random = Math.floor(Math.random() * Object.keys(banmessages).length);
@@ -484,18 +484,18 @@ client.on("ban", (channel, username, reason) => {
             }
         }
         strArrayMessage = strArrayMessage.join(" ");
-        client.action(channelname, strArrayMessage);    
+        chat.action(channelname, strArrayMessage);    
     } catch { }
 });
 
 // Commands
-client.on('chat', function(channel, user, message, self){   
+chat.on('chat', function(channel, user, message, self){   
     
     // Respond to user command using commands
     try{
         if(config.Commands.hasOwnProperty(message)){
             try{
-                client.action(channelname, config.Commands[message]);       
+                chat.action(channelname, config.Commands[message]);       
             }catch(error){
                 console.log(error);
             }
@@ -528,10 +528,10 @@ client.on('chat', function(channel, user, message, self){
     if(strArray[0] === ("!replaypack")){
         try{
             if(user.username === channelname || user.username === channelname.toLowerCase()){
-                client.action(channelname, "Working on it");
+                chat.action(channelname, "Working on it");
                 PythonShell.run('Renamer.py', null, function (err) {
                     if (err) throw err;
-                    client.action(channelname, "Replaypack finished");
+                    chat.action(channelname, "Replaypack finished");
                   });
                 }
         } catch { }
@@ -542,7 +542,7 @@ client.on('chat', function(channel, user, message, self){
         try{
             if(user.username === channelname || user.username === channelname.toLowerCase()){
                 if (strArray.length < 3){
-                    client.action(channelname, "Command format: \"!add !command message\"");
+                    chat.action(channelname, "Command format: \"!add !command message\"");
                 }
                 else if (strArray[1].charAt(0) == "!"){
                     var sentenceArray = strArray.slice(); // Clone array
@@ -551,15 +551,15 @@ client.on('chat', function(channel, user, message, self){
                     config.Commands[strArray[1]] = sentenceArray.join(" ").toString();
                     fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
                     function finished(error){
-                        client.action(channelname, "command " + strArray[1] +" added");
+                        chat.action(channelname, "command " + strArray[1] +" added");
                     }
                 }
                 else{
-                    client.action(channelname, "Use an exclamation point at the start of the command you want to add");
+                    chat.action(channelname, "Use an exclamation point at the start of the command you want to add");
                 }
             }
             else{
-                client.action(channelname, "You can't tell me what to do");
+                chat.action(channelname, "You can't tell me what to do");
             }
         } catch { }
     }
@@ -569,7 +569,7 @@ client.on('chat', function(channel, user, message, self){
         try{
             if(user.username === channelname.user || user.username === channelname.toLowerCase()){
                 if(strArray.length < 2 || strArray.length > 2){
-                    client.action(channelname, "To remove a command, type \"!remove\"");
+                    chat.action(channelname, "To remove a command, type \"!remove\"");
                 }
                 if(strArray.length === 2){
                     if(strArray[1].charAt(0) == "!"){
@@ -577,16 +577,16 @@ client.on('chat', function(channel, user, message, self){
                         strConfig = JSON.stringify(config, null, 4);
                         fs.writeFileSync("./config.json", strConfig, finished());
                         function finished(error){
-                            client.action(channelname, "command " + strArray[1] +" removed");
+                            chat.action(channelname, "command " + strArray[1] +" removed");
                         }
                     }
                     else{
-                        client.action(channelname, "Use an exclamation point at the start of the command you want to remove");
+                        chat.action(channelname, "Use an exclamation point at the start of the command you want to remove");
                     }
                 }
             }
             else{
-                client.action(channelname, "You can't tell me what to do");
+                chat.action(channelname, "You can't tell me what to do");
             }
         } catch { }
     }
@@ -596,7 +596,7 @@ client.on('chat', function(channel, user, message, self){
         try{
             if(user.username === channelname || user.username === channelname.toLowerCase()){
                 if (strArray.length < 2){
-                    client.action(channelname, "To add a sub message type \"!addsub message here\"");
+                    chat.action(channelname, "To add a sub message type \"!addsub message here\"");
                 }
                 else if (strArray.length >= 2){
                     var sentenceArray = strArray.slice(); // Clone array
@@ -605,12 +605,12 @@ client.on('chat', function(channel, user, message, self){
                     config.Alerts.SubMessages[keyvalue] = sentenceArray.join(" ").toString();
                     fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
                     function finished(error){
-                        client.action(channelname, sentenceArray.join(" ") + " submessage added!");
+                        chat.action(channelname, sentenceArray.join(" ") + " submessage added!");
                     }
                 }   
             }
             else{
-                client.action(channelname, "You can't tell me what to do");
+                chat.action(channelname, "You can't tell me what to do");
             }
         } catch { }
         
@@ -621,7 +621,7 @@ client.on('chat', function(channel, user, message, self){
         try{
             if(user.username === channelname || user.username === channelname.toLowerCase()){
                 if (strArray.length < 2){
-                    client.action(channelname, "To add a sub message type \"!addsub message here\"");
+                    chat.action(channelname, "To add a sub message type \"!addsub message here\"");
                 }
                 else if (strArray.length >= 2){
                     var sentenceArray = strArray.slice(); // Clone array
@@ -630,12 +630,12 @@ client.on('chat', function(channel, user, message, self){
                     config.Alerts.BanMessages[keyvalue] = sentenceArray.join(" ").toString();
                     fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
                     function finished(error){
-                        client.action(channelname, sentenceArray.join(" ") + " banmessage added!");
+                        chat.action(channelname, sentenceArray.join(" ") + " banmessage added!");
                     }
                 }   
             }
             else{
-                client.action(channelname, "You can't tell me what to do");
+                chat.action(channelname, "You can't tell me what to do");
             }
         } catch { }
     }
@@ -645,13 +645,13 @@ client.on('chat', function(channel, user, message, self){
         try{
             if(user.username === channelname || user.username === channelname.toLowerCase()){
                 if (strArray.length < 2){
-                    client.action(channelname, "To add a sub message type \"!addsub message here\"");
+                    chat.action(channelname, "To add a sub message type \"!addsub message here\"");
                 }
                 else if (strArray.length >= 2){
                 }   
             }
             else{
-                client.action(channelname, "You can't tell me what to do");
+                chat.action(channelname, "You can't tell me what to do");
             }
         } catch { }
     }
@@ -682,7 +682,7 @@ client.on('chat', function(channel, user, message, self){
         try{
             if(user.username === channelname || user.username === channelname.toLowerCase()){
                 if (strArray.length < 2){
-                    client.action(channelname, "Shoutout who?");
+                    chat.action(channelname, "Shoutout who?");
                 }
                 else if (strArray.length == 2){
                     shoutout(strArray[1]);
@@ -696,12 +696,12 @@ client.on('chat', function(channel, user, message, self){
     if(strArray[0] === ("!pirate")){
         try{
             if (strArray.length < 2){
-                client.action(channelname, "To talk like a pirate type \"!pirate message here\"");
+                chat.action(channelname, "To talk like a pirate type \"!pirate message here\"");
             }
             else if (strArray.length >= 2){
                 var sentenceArray = strArray.slice(); // Clone array
                 sentenceArray.shift();
-                client.action(channelname, pirateSpeak.translate(sentenceArray.join(" ")));
+                chat.action(channelname, pirateSpeak.translate(sentenceArray.join(" ")));
             }   
         } catch { }
     }

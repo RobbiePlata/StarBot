@@ -248,6 +248,11 @@ async function getUpTime(){
     }
 }
 
+// Get current viewer count
+async function GetViewerCount() {
+    
+}
+
 // Convert milliseconds into uptime literal
 function convertUptime(milliseconds) {
     var day, hour, minutes, seconds;
@@ -675,6 +680,11 @@ chat.on('chat', function(channel, user, message, self){
         try{
 
         } catch { }
+    }
+
+    // Add message that appears every messageInterval
+    if(strArray[0] === ("!viewers")){
+        
     }
 
     // Add message that appears every messageInterval

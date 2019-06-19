@@ -29,7 +29,7 @@ sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2un
 // Twitch Information
 var options = {
     options: {
-        debug: false
+        debug: true
     },
     connection: {
         reconnect: true
@@ -246,11 +246,6 @@ async function getUpTime(){
     }
 }
 
-// Get current viewer count
-async function GetViewerCount() {
-    
-}
-
 // Convert milliseconds into uptime literal
 function convertUptime(milliseconds) {
     var day, hour, minutes, seconds;
@@ -401,6 +396,8 @@ function printCommands(){
         console.log("!addsub message");
         console.log("!addban message");
         console.log("!uptime");
+        console.log("!addhostmessage");
+        console.log("!addwelcome");
         console.log("");
         Object.keys(commands).forEach(function(key) {
             console.log(key + ': ' + commands[key])
@@ -412,31 +409,52 @@ function printCommands(){
 chat.on('connected', function(address, port) {
     try{
         console.log("Welcome " + channelname + ", " + botusername + " is online!\n");
-        chat.action(channelname, "o7");
+        var welcomemessages = config.Alerts.WelcomeMessages;
+        var random = Math.floor(Math.random() * Object.keys(welcomemessages).length);
+        var welcomemessage = welcomemessages[random];
+        chat.action(channelname, welcomemessage);
         printCommands();
     } catch { }
 });
 
 // Cycle through messages every set interval
 try{
-    count = Math.floor(Math.random() * Object.keys(config.Alerts.Messages).length); // Start count on a random number (So first message is random)
-    setInterval(() => {
-        messages = config.Alerts.Messages // (Allow newly added commands to be recognized every interval)
-        if(count <= Object.keys(messages).length - 1){
-            chat.action(channelname, config.Alerts.Messages[count]);
-        }
-        else{
-            count = 0;
-            chat.action(channelname, config.Alerts.Messages[count]);
-        }
-        count = count + 1;
-    }, messageInterval.interval); 
+    if(Object.keys(config.Alerts.Messages).length !== 0){
+        count = Math.floor(Math.random() * Object.keys(config.Alerts.Messages).length); // Start count on a random number (So first message is random)
+        setInterval(() => {
+            messages = config.Alerts.Messages // (Allow newly added commands to be recognized every interval)
+            if(count <= Object.keys(messages).length - 1){
+                chat.action(channelname, config.Alerts.Messages[count]);
+            }
+            else{
+                count = 0;
+                chat.action(channelname, config.Alerts.Messages[count]);
+            }
+            count = count + 1;
+        }, messageInterval.interval); 
+    }
 } catch { }
-
 
 // Hosted
 chat.on("hosted", (channel, username, viewers, autohost) => {
-    chat.action(channelname, "\"IM CULTIVATING MASS\"")
+    if(Object.keys(config.Alerts.HostMessages).length !== 0){
+        try{
+            var hostmessages = config.Alerts.HostMessages;
+            var random = Math.floor(Math.random() * Object.keys(hostmessages).length);
+            var hostmessage = hostmessages[random];
+            strArrayMessage = hostmessage.split(" ");
+            for(index = 0; index < strArrayMessage.length; index ++){
+                if(strArrayMessage[index].toLowerCase() == "user"){
+                    strArrayMessage[index] = username;
+                }
+                if(strArrayMessage[index].toLowerCase() == "viewers"){
+                    strArrayMessage[index] = viewers;
+                }
+            }
+            strArrayMessage = strArrayMessage.join(" ");
+            chat.action(channelname, strArrayMessage);
+        } catch { }
+    }
 });
 
 // Subscription
@@ -444,8 +462,8 @@ chat.on("subscription", function (channel, username, message, userstate) {
     try{
         var submessages = config.Alerts.Submessages;
         var random = Math.floor(Math.random() * Object.keys(submessages).length);
-        var message = submessages[random];
-        strArrayMessage = message.split(" ");
+        var submessage = submessages[random];
+        strArrayMessage = submessage.split(" ");
         //console.log(strArrayMessage);
         for(index = 0; index < strArrayMessage.length; index ++){
             if(strArrayMessage[index].toLowerCase() == "user"){
@@ -462,8 +480,8 @@ chat.on("resub", function (channel, username, months, message) {
     try{
         var submessages = config.Alerts.Submessages;
         var random = Math.floor(Math.random() * Object.keys(submessages).length);
-        var message = submessages[random];
-        strArrayMessage = message.split(" ");
+        var resubmessage = submessages[random];
+        strArrayMessage = resubmessage.split(" ");
         for(index = 0; index < strArrayMessage.length; index ++){
             if(strArrayMessage[index].toLowerCase() == "user"){
                 strArrayMessage[index] = username;
@@ -479,8 +497,8 @@ chat.on("ban", (channel, username, reason) => {
     try{
         var banmessages = config.Alerts.BanMessages;
         var random = Math.floor(Math.random() * Object.keys(banmessages).length);
-        var message = banmessages[random];
-        strArrayMessage = message.split(" ");
+        var banmessage = banmessages[random];
+        strArrayMessage = banmessage.split(" ");
         for(index = 0; index < strArrayMessage.length; index ++){
             if(strArrayMessage[index].toLowerCase() == "user"){
                 strArrayMessage[index] = username;
@@ -648,10 +666,10 @@ chat.on('chat', function(channel, user, message, self){
         try{
             if(user.username === channelname || user.username === channelname.toLowerCase()){
                 if (strArray.length < 2){
-                    chat.action(channelname, "To add a sub message type \"!addsub message here\"");
+                    chat.action(channelname, "To add a sub message type \"!add message here\"");
                 }
                 else if (strArray.length >= 2){
-                }   
+                }
             }
             else{
                 chat.action(channelname, "You can't tell me what to do");
@@ -680,9 +698,52 @@ chat.on('chat', function(channel, user, message, self){
         } catch { }
     }
 
-    // Add message that appears every messageInterval
-    if(strArray[0] === ("!viewers")){
-        
+    // Add messages that appear everytime you start the bot
+    if(strArray[0] === ("!addwelcome")){
+        try{
+            if(user.username === channelname || user.username === channelname.toLowerCase()){
+                if(strArray.length < 2){
+                    chat.action(channelname, "To change your welcome message, type \"!addwelcome message here\"");
+                }
+                else if(strArray.length >= 2){
+                    var sentenceArray = strArray.slice(); // Clone array
+                    sentenceArray.shift();
+                    keyvalue = Object.keys(config.Alerts.WelcomeMessages).length;
+                    config.Alerts.WelcomeMessage[keyvalue] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    function finished(error){
+                        chat.action(channelname, sentenceArray.join(" ") + " welcomemessage added!");
+                    }
+                }
+            }
+            else{
+                chat.action(channelname, "You can't tell me what to do");
+            }
+        } catch { }
+    }
+
+    // Add messages that appears every host
+    if(strArray[0] === ("!addhostmessage")){
+        try{
+            if(user.username === channelname || user.username === channelname.toLowerCase()){
+                if(strArray.length < 2){
+                    chat.action(channelname, "To add a host message, type \"!addhostmessage message here\"");
+                }
+                else if(strArray.length >= 2){
+                    var sentenceArray = strArray.slice(); // Clone array
+                    sentenceArray.shift();
+                    keyvalue = Object.keys(config.Alerts.HostMessages).length;
+                    config.Alerts.HostMessages[keyvalue] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    function finished(error){
+                        chat.action(channelname, sentenceArray.join(" ") + " host message added!");
+                    }
+                }
+            }
+            else{
+                chat.action(channelname, "You can't tell me what to do");
+            }
+        } catch { }
     }
 
     // Add message that appears every messageInterval

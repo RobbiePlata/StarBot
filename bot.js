@@ -774,4 +774,15 @@ chat.on('chat', function(channel, user, message, self){
             }   
         } catch { }
     }
+
+    // Kill chat bot while keeping other functionality
+    if(strArray[0] === ("!killbot")){
+        try{
+            if(user.username === channelname || user.username === channelname.toLowerCase()){
+                chat.action(channelname, "Goodbye");
+                chat = null;
+            }
+        } catch { }
+    }
+
 });

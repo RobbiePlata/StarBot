@@ -4,13 +4,11 @@
 /// Utilized by professional Starcraft players to enhance the viewers' experience
 
 // Dependencies
-tmi = require('tmi.js');
-TwitchClient = require('twitch').default;
-fs = require('fs');
+var ClientHolder = require('./ClientHolder');
+var tmi = require('tmi.js');
+var fs = require('fs');
 var readline = require('readline-sync');
 var pirateSpeak = require('pirate-speak');
-
-// require json directories
 var config = require("./config.json");
 
 // twitch-tmi information
@@ -20,18 +18,18 @@ channelname = getChannelName();
 replaypath = getReplayPath();
 
 // twitch-api and game information
-
 var clientid = config.App.Channel.clientid;
 const accessToken = getAccessToken(clientid);
 (async() => {
-    client = await TwitchClient.withCredentials(clientid, accessToken); 
+    await ClientHolder.init(clientid, accessToken);
+    client = ClientHolder.getClient();
 })();
 sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
 
 // Twitch Information
 var options = {
     options: {
-        debug: true
+        debug: false
     },
     connection: {
         reconnect: true

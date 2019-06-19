@@ -22,7 +22,6 @@ var clientid = config.App.Channel.clientid;
 const accessToken = getAccessToken(clientid);
 (async() => {
     await ClientHolder.init(clientid, accessToken);
-    client = ClientHolder.getClient();
 })();
 sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
 
@@ -209,6 +208,7 @@ function getBotAPI(){
 
 // Check if stream is live
 async function isStreamLive(userName) {
+    client = ClientHolder.getClient();
 	const user = await client.helix.users.getUserByName(userName);
 	if (!user) {
 		return false;
@@ -219,6 +219,7 @@ async function isStreamLive(userName) {
 // Get uptime using the current time minus the startDate of stream (in milliseconds) then convert to standard time form
 async function getUpTime(){
     if (await isStreamLive(channelname)){
+        client = ClientHolder.getClient();
         const user = await client.helix.users.getUserByName(channelname);
         const stream = user.getStream();
         var start = stream.startDate; // Start date
@@ -267,6 +268,7 @@ function convertUptime(milliseconds) {
 async function shoutout(name){
     try{
         if(await isStreamLive(name)){
+            client = ClientHolder.getClient();
             const user = await client.users.getUserByName(name);
             const channel = await user.getChannel();
             chat.action(channelname, "Give " + channel.displayName + " a follow at twitch.tv/" + channel.displayName + " They're live right now playing " + channel.game);

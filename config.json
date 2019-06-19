@@ -1,0 +1,37 @@
+{
+    "App": {
+        "Channel": {
+            "name": "",
+            "clientid": "",
+            "accessToken": ""
+        },
+        "Bot": {
+            "name": "",
+            "apikey": ""
+        },
+        "Game": {
+            "scid": [
+                ""
+            ],
+            "names": [
+                ""
+            ],
+            "path": "",
+            "region": "us"
+        }
+    },
+    "Commands": {},
+    "Alerts": {
+        "WelcomeMessages": {
+            "0": "Hello"
+        },
+        "HostMessages": {
+        },
+        "BanMessages": {
+        },
+        "Messages": {
+        },
+        "SubMessages": {
+        }
+    }
+}

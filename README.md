@@ -1,7 +1,7 @@
 <img src="https://i.imgur.com/mVTwNhW.png" align="right"/>
 
 # StarBot
-TwitchBot using Node.js
+using Node.js and Python
 
 ## Getting Started
 

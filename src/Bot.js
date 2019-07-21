@@ -12,7 +12,6 @@
 var ClientHolder = require('./ClientHolder');
 var tmi = require('tmi.js');
 var fs = require('fs');
-var readline = require('readline-sync');
 var pirateSpeak = require('pirate-speak');
 var config = require("./Config.json");
 var initializer = require("./Initializer");

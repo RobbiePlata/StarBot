@@ -6,13 +6,12 @@ class Initializer{
         var readline = require('readline-sync');
         var config = require("./Config.json");
         var fs = require('fs');
-
         var apikey = getBotAPI();
         var botusername = getBotUsername();
         var channelname = getChannelName();
-        var replaypath = getReplayPath();
         var clientid = getClientID();
         var accessToken = getAccessToken(clientid);
+        var replaypath = getReplayPath();
 
         Object.defineProperty(this, "apikey", {
             get() {
@@ -207,8 +206,6 @@ class Initializer{
         }
     }
     
-
-
 }
 
 module.exports = new Initializer();

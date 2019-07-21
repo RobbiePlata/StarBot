@@ -15,20 +15,15 @@ var fs = require('fs');
 var readline = require('readline-sync');
 var pirateSpeak = require('pirate-speak');
 var config = require("./Config.json");
-
-// twitch-tmi information
-apikey = getBotAPI();
-botusername = getBotUsername();
-channelname = getChannelName();
-replaypath = getReplayPath();
+var initializer = require("./Initializer");
 
 // twitch-api and game information
-var clientid = config.App.Channel.clientid;
-const accessToken = getAccessToken(clientid);
 (async() => {
-    await ClientHolder.init(clientid, accessToken);
+    await ClientHolder.init(initializer.clientid, initializer.accessToken);
 })();
 sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
+
+var channelname = initializer.channelname;
 
 // Twitch Information
 var options = {
@@ -39,10 +34,10 @@ var options = {
         reconnect: true
     },
     identity: {
-        username: botusername,
-        password: apikey    
+        username: initializer.botusername,
+        password: initializer.apikey    
     },
-    channels: [channelname]
+    channels: [initializer.channelname]
 };
 
 // 15 minutes = 900000
@@ -55,161 +50,6 @@ var messageInterval = {
       this.time = value * 60000;
     }
 };
-
-// If botusername is empty, ask user for bot username and write to file
-function getReplayPath(){
-    var path = config.App.Game.path;
-    if(path !== "" && path !== undefined){
-        return path.replace(/\\/g, "/");
-    }
-    else{
-        path = readline.question("What is the path of your Starcraft II replay folder?");
-        config.App.Game.path = path.replace(/\\/g, "/");
-        fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
-            if(err) {
-                return console.log(err);
-            }
-            console.log("Path saved. If you made a mistake, you can change it later in config.json");
-            }); 
-            try{
-                return config.App.Game.path;
-            }catch(err){
-                console.log(err);
-            }
-    }
-}
-
-// If botusername is empty, ask user for bot username and write to file
-function getBotUsername(){
-    var botusername = config.App.Bot.name;
-    if(botusername !== "" && botusername !== undefined){
-        return botusername;
-    }
-    else{
-        bot = readline.question("Bot's Username: ");
-        config.App.Bot.name = bot;
-        fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
-            if(err) {
-                return console.log(err);
-            }
-            console.log("Username saved");
-            }); 
-            try{
-                return config.App.Bot.name;
-            }catch(err){
-                console.log(err);
-            }
-    }
-}
-
-// Get user access token
-function getAccessToken(){
-    var token = config.App.Channel.accessToken;
-    // Token is present
-    if(token !== "" && token !== undefined){
-        return token;
-    }
-    // Token is not present
-    else{
-        userTokenRetreival(); // Open browser for user to enter token
-        writeAccessToken(); // Write access token to accesstoken.txt
-            try{
-                return token = config.App.Channel.accessToken;
-            }catch(err){
-                console.log(err);
-            }
-        }
-}
-
-// Open web browser for authentication token retrieval
-function userTokenRetreival(){
-    var opn = require('opn');
-        opn("https://twitch.center/token", {
-        wait: true
-    }).then(function(cp) {
-        //console.log('child process:',cp);
-        //console.log('worked');
-    }).catch(function(err) {
-        //console.error(err);
-    });
-}
-
-// Write authentication token to file
-function writeAccessToken(){
-    var key = readline.question("Check all scopes, generate token, then enter the code here: ");
-    config.App.Channel.accessToken = key;
-        fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
-            if(err) {
-                return console.log(err);
-            }
-            console.log("Access Token saved");
-        });
-        try{
-            return config.App.Channel.accessToken;
-        }catch(err){
-            console.log(err);
-        }
-}
-
-// If channelname is empty, ask user for channelname & write channelname to file
-function getChannelName(){
-    var channelname = config.App.Channel.name;
-    if(channelname !== "" && channelname !== undefined){
-        return channelname;
-    }
-    else{
-        name = readline.question("Enter your stream channel: ");
-        config.App.Channel.name = name;
-        fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
-            if(err) {
-                return console.log(err);
-            }
-            console.log("Username saved");
-            }); 
-            try{
-                return config.App.Channel.name;
-            }catch(err){
-                console.log(err);
-            }
-    }
-}
-
-// Open web browser for user api confirmation and retrieval
-function botAPIRetrieval(){
-    var opn = require('opn');
-        opn("https://twitchapps.com/tmi", {
-        wait: true
-    }).then(function(cp) {
-        //console.log('child process:',cp);
-        //console.log('worked');
-    }).catch(function(err) {
-        //console.error(err);
-    });
-}
-
-// If botapi is empty, ask user for prompt user for bot api and write to file
-function getBotAPI(){
-    var botapi = config.App.Bot.apikey;
-    if(botapi !== "" && botapi !== undefined){
-        return botapi;
-    }
-    else{
-        botAPIRetrieval();
-        api = readline.question("Enter your Bot's Oauth key: ");
-        config.App.Bot.apikey = api;
-        fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
-            if(err) {
-                return console.log(err);
-            }
-            console.log("Bot API key saved");
-            }); 
-            try{
-                return config.App.Bot.apikey;
-            }catch(err){
-                console.log(err);
-            }
-    }
-}
 
 // Check if stream is live
 async function isStreamLive(userName) {
@@ -281,7 +121,7 @@ async function shoutout(name){
         else{
             chat.action(channelname, "Give " + name + " a follow at twitch.tv/" + name);
         }
-    } catch (err) { console.log(err) }
+    } catch (err) { }
 }
 
 // Search Sc2Unmasked and return MMRs of two players
@@ -289,6 +129,7 @@ async function searchSC2Unmasked(player1, player2, callback){
     http = require('http');
     var player1search = "http://sc2unmasked.com/API/Player?name=" + player1.name + "&server=" + sc2server + "&race=" + getMatchup(player1.race).toLowerCase();
     var player2search = "http://sc2unmasked.com/API/Player?name=" + player2.name + "&server=" + sc2server + "&race=" + getMatchup(player2.race).toLowerCase();
+    
     async function getMMR(playerdata, player, callback){
         mmr = 0;
         for (i = 0; i < playerdata.players.length; i++){
@@ -319,7 +160,7 @@ async function searchSC2Unmasked(player1, player2, callback){
             });
     
             }).on("error", (err) => {
-                console.log(err);
+                //console.log(err);
                 mmr1 = "?";
                 callback(mmr);
             });
@@ -341,10 +182,10 @@ async function getOpponent(){
             data = JSON.parse(chunk);
         });
         resp.on('end', () => {
-            console.log(data);
+            //console.log(data);
             searchSC2Unmasked(data.players[0], data.players[1], function(mmr1, mmr2){
                 if(data.isReplay == false){
-                    console.log(mmr1, mmr2);
+                    //console.log(mmr1, mmr2);
                     players = data.players;
                     player1 = players[0];
                     player1race = getMatchup(player1.race);
@@ -358,10 +199,10 @@ async function getOpponent(){
             });
         });
         
-        }).on("error", (err) => {
-          console.log("Starcraft needs to be open");
-          chat.action(channelname, "StarCraft must be open");
-        });
+    }).on("error", (err) => {
+        console.log("Starcraft needs to be open");
+        chat.action(channelname, "StarCraft must be open");
+    });
 }
 
 // Get Starcraft II matchup
@@ -385,11 +226,11 @@ chat.connect(channelname);
 
 try{
     var {PythonShell} = require('python-shell') // Allow the execution of python script
-    PythonShell.run('Stats.py', null, function (err) {
+    PythonShell.run(__dirname + '/Stats.py', null, function (err) {
         console.log("Recording records..")
         if (err) throw err;
       });
-} catch { }
+} catch {  }
 
 //client.on('ping', () => console.log('[PING] Received ping.'));
 function printCommands(){
@@ -546,10 +387,10 @@ chat.on('chat', function(channel, user, message, self){
     }
     
     // Respond with Starcraft II opponent of streamer NOT FINISHED
-    if(strArray[0] === ("!opponent")){
-        try{
-            getOpponent();
-        } catch { }
+    if(strArray[0] === ("!opponent")){  
+        (async() => {
+            await getOpponent();
+        })();
     }
 
     // Execute Replay Renamer.py script
@@ -557,7 +398,7 @@ chat.on('chat', function(channel, user, message, self){
         try{
             if(user.username === channelname || user.username === channelname.toLowerCase()){
                 chat.action(channelname, "Working on it");
-                PythonShell.run('Renamer.py', null, function (err) {
+                PythonShell.run(__dirname + '/Renamer.py', null, function (err) {
                     if (err) throw err;
                     chat.action(channelname, "Replaypack finished");
                   });

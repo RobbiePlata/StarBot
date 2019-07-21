@@ -17,7 +17,7 @@ if (os.path.isdir("temp") == True):
 os.mkdir('temp')
 print("temp folder created")
 
-with open('config.json') as data_file:
+with open('Config.json') as data_file:
     data = json.load(data_file)
 
 sc2replaypath = data["App"]["Game"]["path"]

@@ -14,7 +14,7 @@ var tmi = require('tmi.js');
 var fs = require('fs');
 var readline = require('readline-sync');
 var pirateSpeak = require('pirate-speak');
-var config = require("./config.json");
+var config = require("./Config.json");
 
 // twitch-tmi information
 apikey = getBotAPI();

@@ -4,7 +4,7 @@ import glob
 import sc2reader
 import json
 
-with open('config.json') as data_file:
+with open('Config.json') as data_file:
     data = json.load(data_file)
 
 path = os.getcwd() + "/replays/"

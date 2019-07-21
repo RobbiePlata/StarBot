@@ -1,8 +1,13 @@
-﻿/// Robert Plata
-/// Latest 6.2.2019 11:55pm
-/// Flexible Twitch Bot for use with Starcraft II
-/// Utilized by professional Starcraft players to enhance the viewers' experience
-
+﻿/**  Robert Plata
+ *  Latest 7.21.2019 12:20pm
+ *  Flexible Twitch Bot for use with Starcraft II
+ *  Utilized by professional Starcraft players to enhance the viewers' experience
+ *  @TODO
+ *  Change configuration to accomidate environment variables for important keys
+ *  Split program classes for modularity
+ *  Integrate Angular to create Twitch-chat/Bot browser environment
+ */
+ 
 // Dependencies
 var ClientHolder = require('./ClientHolder');
 var tmi = require('tmi.js');

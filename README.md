@@ -33,6 +33,9 @@ When using this bot it is recommended that you uncheck the QuickEditMode option 
 
 Launch the bot using
 ```
+C:\Users\robert.plata\Desktop\StarBot\src
+```
+```
 Node bot.js
 ```
 Compile the bot using 'install.bat' <br>

@@ -385,7 +385,7 @@ chat.connect(channelname);
 
 try{
     var {PythonShell} = require('python-shell') // Allow the execution of python script
-    PythonShell.run('Stats Updater.py', null, function (err) {
+    PythonShell.run('Stats.py', null, function (err) {
         console.log("Recording records..")
         if (err) throw err;
       });

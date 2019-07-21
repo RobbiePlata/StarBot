@@ -33,7 +33,7 @@ When using this bot it is recommended that you uncheck the QuickEditMode option 
 
 Launch the bot using
 ```
-C:\Users\robert.plata\Desktop\StarBot\src
+cd C:\Users\yourname\Desktop\StarBot\src
 ```
 ```
 Node bot.js

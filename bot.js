@@ -671,6 +671,14 @@ chat.on('chat', function(channel, user, message, self){
                     chat.action(channelname, "To add a sub message type \"!add message here\"");
                 }
                 else if (strArray.length >= 2){
+                    var sentenceArray = strArray.slice(); // Clone array
+                    sentenceArray.shift();
+                    keyvalue = Object.keys(config.Alerts.Messages).length;
+                    config.Alerts.Messages[keyvalue] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    function finished(error){
+                        chat.action(channelname, sentenceArray.join(" ") + " message added!");
+                    }
                 }
             }
             else{

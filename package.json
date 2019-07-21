@@ -19,11 +19,12 @@
     "opn": "6.0.0",
     "package-name": "^0.1.0",
     "pirate-speak": "1.0.1",
-    "pkg": "4.3.7",
+    "pkg": "^4.4.0",
     "python-shell": "1.0.7",
     "readline-sync": "1.4.9",
     "tmi.js": "1.4.2",
     "twitch": "2.2.5"
   },
-  "homepage": "https://github.com/RobbiePlata/StarBot#readme"
+  "homepage": "https://github.com/RobbiePlata/StarBot#readme",
+  "devDependencies": {}
 }

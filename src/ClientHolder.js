@@ -1,5 +1,5 @@
 class ClientHolder {
-
+    
     TwitchClient = require('twitch').default;
     initialized = false;
     client = null;
@@ -15,7 +15,7 @@ class ClientHolder {
         this.accessToken = accessToken;
     }
 
-    getClient() {
+    GetClient() {
         if (!this.initialized) { throw new Error("Client could not be initialized") }
         return this.client;
     }

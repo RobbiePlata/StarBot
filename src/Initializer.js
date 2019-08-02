@@ -1,76 +1,76 @@
 class Initializer{
-    
-    // twitch-tmi information
     constructor(){
-        
         var readline = require('readline-sync');
         var config = require("./Config.json");
         var fs = require('fs');
-        var apikey = getBotAPI();
-        var botusername = getBotUsername();
-        var channelname = getChannelName();
-        var clientid = getClientID();
-        var accessToken = getAccessToken(clientid);
-        var replaypath = getReplayPath();
+        var apikey = GetBotAPI();
+        var botusername = GetBotUsername();
+        var channelname = GetChannelName();
+        var clientid = config.App.Channel.clientid;
+        var accessToken = GetAccessToken(clientid);
+        var replaypath = GetReplayPath();
 
-        Object.defineProperty(this, "apikey", {
-            get() {
-              return apikey;
-            }
-        });
-
-        Object.defineProperty(this, "botusername", {
-            get() {
-              return botusername;
+        Object.defineProperty(this, 'apikey', {
+            get: function() {
+                return apikey;
             }
         });
 
-        Object.defineProperty(this, "channelname", {
-            get() {
-              return channelname;
-            }
-        });
-        Object.defineProperty(this, "replaypath", {
-            get() {
-              return replaypath;
-            }
-        });
-        Object.defineProperty(this, "clientid", {
-            get() {
-              return clientid;
-            }
-        });
-        Object.defineProperty(this, "accessToken", {
-            get() {
-              return accessToken;
+        Object.defineProperty(this, 'botusername', {
+            get: function() {
+                return botusername;
             }
         });
 
-        // If botusername is empty, ask user for bot username and write to file
-        function getReplayPath(){
-        var path = config.App.Game.path;
-        if(path !== "" && path !== undefined){
-            return path.replace(/\\/g, "/");
-        }
-        else{
-            path = readline.question("What is the path of your Starcraft II replay folder?");
-            config.App.Game.path = path.replace(/\\/g, "/");
-            fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
-                if(err) {
-                    return console.log(err);
-                }
-                console.log("Path saved. If you made a mistake, you can change it later in config.json");
-                }); 
-                try{
-                    return config.App.Game.path;
-                }catch(err){
-                    console.log(err);
-                }
+        Object.defineProperty(this, 'channelname', {
+            get: function() {
+                return channelname;
             }
-        }
+        });
+
+        Object.defineProperty(this, 'clientid', {
+            get: function() {
+                return clientid;
+            }
+        });
+
+        Object.defineProperty(this, 'accessToken', {
+            get: function() {
+                return accessToken;
+            }
+        });
+
+        Object.defineProperty(this, 'replaypath', {
+            get: function() {
+                return replaypath;
+            }
+        });
 
         // If botusername is empty, ask user for bot username and write to file
-        function getBotUsername(){
+        function GetReplayPath(){
+            var path = config.App.Game.path;
+            if(path !== "" && path !== undefined){
+                return path.replace(/\\/g, "/");
+            }
+            else{
+                path = readline.question("What is the path of your Starcraft II replay folder?");
+                config.App.Game.path = path.replace(/\\/g, "/");
+                fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
+                    if(err) {
+                        return console.log(err);
+                    }
+                    console.log("Path saved. If you made a mistake, you can change it later in config.json");
+                    }); 
+                    try{
+                        return config.App.Game.path;
+                    }catch(err){
+                        console.log(err);
+                    }
+                }
+            }
+        
+        // If botusername is empty, ask user for bot username and write to file
+        function GetBotUsername(){
         var botusername = config.App.Bot.name;
         if(botusername !== "" && botusername !== undefined){
             return botusername;
@@ -91,9 +91,9 @@ class Initializer{
                 }
             }
         }
-
+    
         // Get user access token
-        function getAccessToken(){
+        function GetAccessToken(){
         var token = config.App.Channel.accessToken;
         // Token is present
         if(token !== "" && token !== undefined){
@@ -101,7 +101,7 @@ class Initializer{
         }
         // Token is not present
         else{
-            userTokenRetreival(); // Open browser for user to enter token
+            userTokenRetrieval(); // Open browser for user to enter token
             writeAccessToken(); // Write access token to accesstoken.txt
                 try{
                     return token = config.App.Channel.accessToken;
@@ -110,13 +110,9 @@ class Initializer{
                 }
             }
         }
-
-        function getClientID(){
-            return config.App.Channel.clientid;
-        }
-
+    
         // Open web browser for authentication token retrieval
-        function userTokenRetreival(){
+        function UserTokenRetrieval(){
         var opn = require('opn');
             opn("https://twitch.center/token", {
             wait: true
@@ -127,9 +123,9 @@ class Initializer{
                 //console.error(err);
             });
         }
-
+    
         // Write authentication token to file
-        function writeAccessToken(){
+        function WriteAccessToken(){
         var key = readline.question("Check all scopes, generate token, then enter the code here: ");
         config.App.Channel.accessToken = key;
             fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
@@ -144,9 +140,9 @@ class Initializer{
                 console.log(err);
             }
         }
-
+    
         // If channelname is empty, ask user for channelname & write channelname to file
-        function getChannelName(){
+        function GetChannelName(){
         var channelname = config.App.Channel.name;
         if(channelname !== "" && channelname !== undefined){
             return channelname;
@@ -167,9 +163,9 @@ class Initializer{
                 }
             }
         }
-
+    
         // Open web browser for user api confirmation and retrieval
-        function botAPIRetrieval(){
+        function BotAPIRetrieval(){
         var opn = require('opn');
             opn("https://twitchapps.com/tmi", {
             wait: true
@@ -180,15 +176,15 @@ class Initializer{
                 //console.error(err);
             });
         }
-
+    
         // If botapi is empty, ask user for prompt user for bot api and write to file
-        function getBotAPI(){
+        function GetBotAPI(){
         var botapi = config.App.Bot.apikey;
         if(botapi !== "" && botapi !== undefined){
             return botapi;
         }
         else{
-            botAPIRetrieval();
+            BotAPIRetrieval();
             var api = readline.question("Enter your Bot's Oauth key: ");
             config.App.Bot.apikey = api;
             fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), function(err) {
@@ -204,8 +200,9 @@ class Initializer{
                 }
             }
         }
+
     }
-    
+
 }
 
 module.exports = new Initializer();

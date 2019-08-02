@@ -23,7 +23,7 @@
     "python-shell": "1.0.7",
     "readline-sync": "1.4.9",
     "tmi.js": "1.4.2",
-    "twitch": "2.2.5"
+    "twitch": "^3.0.0-pre.7"
   },
   "homepage": "https://github.com/RobbiePlata/StarBot#readme",
   "devDependencies": {}

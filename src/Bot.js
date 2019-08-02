@@ -9,20 +9,17 @@
  */
  
 // Dependencies
-var ClientHolder = require('./ClientHolder');
 var tmi = require('tmi.js');
 var fs = require('fs');
-var pirateSpeak = require('pirate-speak');
-var config = require("./Config.json");
-var initializer = require("./Initializer");
+var Config = require("./Config.json");
+var Initializer = require("./Initializer");
+var BotHelper = require("./BotHelper");
+var PirateSpeak = require('pirate-speak');
 
 // twitch-api and game information
-(async() => {
-    await ClientHolder.init(initializer.clientid, initializer.accessToken);
-})();
-sc2server = config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
+sc2server = Config.App.Game.region; // Sets a constraint on the selectable sc2unmasked accounts
 
-var channelname = initializer.channelname;
+var channelname = Initializer.channelname;
 
 // Twitch Information
 var options = {
@@ -33,10 +30,10 @@ var options = {
         reconnect: true
     },
     identity: {
-        username: initializer.botusername,
-        password: initializer.apikey    
+        username: Initializer.botusername,
+        password: Initializer.apikey    
     },
-    channels: [initializer.channelname]
+    channels: [Initializer.channelname]
 };
 
 // 15 minutes = 900000
@@ -50,179 +47,12 @@ var messageInterval = {
     }
 };
 
-// Check if stream is live
-async function isStreamLive(userName) {
-    client = ClientHolder.getClient();
-	const user = await client.helix.users.getUserByName(userName);
-	if (!user) {
-		return false;
-	}
-	return user.getStream();
-}
-
-// Get uptime using the current time minus the startDate of stream (in milliseconds) then convert to standard time form
-async function getUpTime(){
-    if (await isStreamLive(channelname)){
-        client = ClientHolder.getClient();
-        const user = await client.helix.users.getUserByName(channelname);
-        const stream = user.getStream();
-        var start = stream.startDate; // Start date
-        var currentTime = new Date(); // Current time
-        msdifference = (currentTime - start); // Difference
-        output = convertUptime(msdifference);
-        if(output.day === 0 && output.hour === 0 && output.minutes === 0){
-            chat.action(channelname, channelname + " has been live for " + output.seconds + " seconds");
-        }
-        else if(output.day === 0 && output.hour === 0){
-            chat.action(channelname, channelname + " has been live for " + output.minutes + " minutes " + output.seconds + " seconds");
-        }
-        else if(output.day === 0){
-            chat.action(channelname, channelname + " has been live for " + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
-        }
-        else if(output.day === 1){
-            chat.action(channelname, channelname + " has been live for " + output.day + " day " + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
-        }
-        else{
-            chat.action(channelname, channelname + " has been live for " + output.day + " days" + output.hour + " hours " + output.minutes + " minutes " + output.seconds + " seconds");
-        }
-    }
-    else{
-        chat.action(channelname, "Stream is not live");
-    }
-}
-
-// Convert milliseconds into uptime literal
-function convertUptime(milliseconds) {
-    var day, hour, minutes, seconds;
-    seconds = Math.floor(milliseconds / 1000);
-    minutes = Math.floor(seconds / 60);
-    seconds = seconds % 60;
-    hour = Math.floor(minutes / 60);
-    minutes = minutes % 60;
-    day = Math.floor(hour / 24);
-    hour = hour % 24;
-    return {
-        day: day,
-        hour: hour,
-        minutes: minutes,
-        seconds: seconds
-    };
-}
-
-async function shoutout(name){
-    try{
-        if(await isStreamLive(name)){
-            client = ClientHolder.getClient();
-            const user = await client.users.getUserByName(name);
-            const channel = await user.getChannel();
-            chat.action(channelname, "Give " + channel.displayName + " a follow at twitch.tv/" + channel.displayName + " They're live right now playing " + channel.game);
-        }
-        else{
-            chat.action(channelname, "Give " + name + " a follow at twitch.tv/" + name);
-        }
-    } catch (err) { }
-}
-
-// Search Sc2Unmasked and return MMRs of two players
-async function searchSC2Unmasked(player1, player2, callback){
-    http = require('http');
-    var player1search = "http://sc2unmasked.com/API/Player?name=" + player1.name + "&server=" + sc2server + "&race=" + getMatchup(player1.race).toLowerCase();
-    var player2search = "http://sc2unmasked.com/API/Player?name=" + player2.name + "&server=" + sc2server + "&race=" + getMatchup(player2.race).toLowerCase();
-    
-    async function getMMR(playerdata, player, callback){
-        mmr = 0;
-        for (i = 0; i < playerdata.players.length; i++){
-            if(playerdata.players[i].acc_name == player.name && playerdata.players[i].server == sc2server && playerdata.players[i].mmr > mmr){
-                mmr = playerdata.players[i].mmr;
-            }
-        }
-        callback(mmr);
-    }
-
-    async function requestSC2Unmasked(playersearch, player, callback){
-        http.get(playersearch, (resp) => {
-            playerdatastr ="";
-            resp.on('data', (chunk) => {
-                playerdatastr += chunk;
-            });
-            
-            resp.on('end', () => {
-                if(playerdatastr != ""){
-                    playerdata = JSON.parse(playerdatastr);
-                    mmr = getMMR(playerdata, player, function(mmr){
-                        callback(mmr);
-                    })
-                }
-                else{
-                    callback("?","?");
-                }
-            });
-    
-            }).on("error", (err) => {
-                //console.log(err);
-                mmr1 = "?";
-                callback(mmr);
-            });
-    }
-
-    mmr1 = requestSC2Unmasked(player1search, player1, function(mmr1){
-        mmr2 = requestSC2Unmasked(player2search, player2, function(mmr2){
-            callback(mmr1, mmr2);
-        })
-    })
-}
-
-// Get starcraft opponent if you're running this application locally
-async function getOpponent(){
-    http = require('http');
-    var gameurl = "http://localhost:6119/game"; //StarCraft 2 Port
-    http.get(gameurl, (resp) => {
-        resp.on('data', (chunk) => {
-            data = JSON.parse(chunk);
-        });
-        resp.on('end', () => {
-            //console.log(data);
-            searchSC2Unmasked(data.players[0], data.players[1], function(mmr1, mmr2){
-                if(data.isReplay == false){
-                    //console.log(mmr1, mmr2);
-                    players = data.players;
-                    player1 = players[0];
-                    player1race = getMatchup(player1.race);
-                    player2 = players[1];
-                    player2race = getMatchup(player2.race);
-                    chat.action(channelname, player1.name + " (" + player1race + "), " + mmr1 + " MMR" + " VS " + player2.name + " (" + player2race  + "), " + mmr2 + " MMR");
-                }
-                else{
-                    chat.action(channelname, channelname + " is in not in a game, or is in a replay");
-                }
-            });
-        });
-        
-    }).on("error", (err) => {
-        console.log("Starcraft needs to be open");
-        chat.action(channelname, "StarCraft must be open");
-    });
-}
-
-// Get Starcraft II matchup
-function getMatchup(race){
-    if(race == "Prot"){
-        race = 'P';
-    }
-    if(race == "Zerg"){
-        race = 'Z';
-    }
-    if(race == "Terr"){
-        race = 'T';
-    }
-    return race;
-}
-
 // Connect to channel
 var chat = new tmi.client(options);
 
 chat.connect(channelname); 
 
+// Start Python Stats
 try{
     var {PythonShell} = require('python-shell') // Allow the execution of python script
     PythonShell.run(__dirname + '/Stats.py', null, function (err) {
@@ -231,51 +61,30 @@ try{
       });
 } catch {  }
 
-//client.on('ping', () => console.log('[PING] Received ping.'));
-function printCommands(){
-    try{
-        commands = config.Commands;
-        console.log("\nCurrent Commands:");
-        console.log("!shoutout twitchname");
-        console.log("!add !command message");
-        console.log("!remove !command");
-        console.log("!addmessage message")
-        console.log("!addsub message");
-        console.log("!addban message");
-        console.log("!uptime");
-        console.log("!addhostmessage");
-        console.log("!addwelcome");
-        console.log("");
-        Object.keys(commands).forEach(function(key) {
-            console.log(key + ': ' + commands[key])
-        })
-    } catch { }
-};
-
 // Welcome Message
 chat.on('connected', function(address, port) {
     try{
         console.log("Welcome " + channelname + ", " + botusername + " is online!\n");
-        var welcomemessages = config.Alerts.WelcomeMessages;
+        var welcomemessages = Config.Alerts.WelcomeMessages;
         var random = Math.floor(Math.random() * Object.keys(welcomemessages).length);
         var welcomemessage = welcomemessages[random];
         chat.action(channelname, welcomemessage);
-        printCommands();
+        BotHelper.PrintCommands();
     } catch { }
 });
 
 // Cycle through messages every set interval
 try{
-    if(Object.keys(config.Alerts.Messages).length !== 0){
-        count = Math.floor(Math.random() * Object.keys(config.Alerts.Messages).length); // Start count on a random number (So first message is random)
+    if(Object.keys(Config.Alerts.Messages).length !== 0){
+        count = Math.floor(Math.random() * Object.keys(Config.Alerts.Messages).length); // Start count on a random number (So first message is random)
         setInterval(() => {
-            messages = config.Alerts.Messages // (Allow newly added commands to be recognized every interval)
+            messages = Config.Alerts.Messages // (Allow newly added commands to be recognized every interval)
             if(count <= Object.keys(messages).length - 1){
-                chat.action(channelname, config.Alerts.Messages[count]);
+                chat.action(channelname, Config.Alerts.Messages[count]);
             }
             else{
                 count = 0;
-                chat.action(channelname, config.Alerts.Messages[count]);
+                chat.action(channelname, Config.Alerts.Messages[count]);
             }
             count = count + 1;
         }, messageInterval.interval); 
@@ -284,9 +93,9 @@ try{
 
 // Hosted
 chat.on("hosted", (channel, username, viewers, autohost) => {
-    if(Object.keys(config.Alerts.HostMessages).length !== 0){
+    if(Object.keys(Config.Alerts.HostMessages).length !== 0){
         try{
-            var hostmessages = config.Alerts.HostMessages;
+            var hostmessages = Config.Alerts.HostMessages;
             var random = Math.floor(Math.random() * Object.keys(hostmessages).length);
             var hostmessage = hostmessages[random];
             strArrayMessage = hostmessage.split(" ");
@@ -307,7 +116,7 @@ chat.on("hosted", (channel, username, viewers, autohost) => {
 // Subscription
 chat.on("subscription", function (channel, username, message, userstate) {
     try{
-        var submessages = config.Alerts.Submessages;
+        var submessages = Config.Alerts.Submessages;
         var random = Math.floor(Math.random() * Object.keys(submessages).length);
         var submessage = submessages[random];
         strArrayMessage = submessage.split(" ");
@@ -325,7 +134,7 @@ chat.on("subscription", function (channel, username, message, userstate) {
 // Resub
 chat.on("resub", function (channel, username, months, message) {
     try{
-        var submessages = config.Alerts.Submessages;
+        var submessages = Config.Alerts.Submessages;
         var random = Math.floor(Math.random() * Object.keys(submessages).length);
         var resubmessage = submessages[random];
         strArrayMessage = resubmessage.split(" ");
@@ -342,7 +151,7 @@ chat.on("resub", function (channel, username, months, message) {
 // Ban
 chat.on("ban", (channel, username, reason) => {
     try{
-        var banmessages = config.Alerts.BanMessages;
+        var banmessages = Config.Alerts.BanMessages;
         var random = Math.floor(Math.random() * Object.keys(banmessages).length);
         var banmessage = banmessages[random];
         strArrayMessage = banmessage.split(" ");
@@ -361,9 +170,9 @@ chat.on('chat', function(channel, user, message, self){
     
     // Respond to user command using commands
     try{
-        if(config.Commands.hasOwnProperty(message)){
+        if(Config.Commands.hasOwnProperty(message)){
             try{
-                chat.action(channelname, config.Commands[message]);       
+                chat.action(channelname, Config.Commands[message]);       
             }catch(error){
                 console.log(error);
             }
@@ -381,14 +190,19 @@ chat.on('chat', function(channel, user, message, self){
     // Get Uptime
     if(strArray[0] === ("!uptime")){
         try{
-            getUpTime(); // TODO get object and post uptime to chat
+            (async() => {
+                BotHelper.GetUptime(channelname, function(uptime){
+                    chat.action(channelname, uptime);
+                }); // TODO get object and post uptime to chat
+                
+            })();
         } catch { }
     }
     
     // Respond with Starcraft II opponent of streamer NOT FINISHED
     if(strArray[0] === ("!opponent")){  
         (async() => {
-            await getOpponent();
+            await BotHelper.GetOpponent();
         })();
     }
 
@@ -416,8 +230,8 @@ chat.on('chat', function(channel, user, message, self){
                     var sentenceArray = strArray.slice(); // Clone array
                     sentenceArray.shift();
                     sentenceArray.shift();
-                    config.Commands[strArray[1]] = sentenceArray.join(" ").toString();
-                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    Config.Commands[strArray[1]] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(Config, null, 4), finished());
                     function finished(error){
                         chat.action(channelname, "command " + strArray[1] +" added");
                     }
@@ -441,8 +255,8 @@ chat.on('chat', function(channel, user, message, self){
                 }
                 if(strArray.length === 2){
                     if(strArray[1].charAt(0) == "!"){
-                        delete config.Commands[strArray[1]];
-                        strConfig = JSON.stringify(config, null, 4);
+                        delete Config.Commands[strArray[1]];
+                        strConfig = JSON.stringify(Config, null, 4);
                         fs.writeFileSync("./config.json", strConfig, finished());
                         function finished(error){
                             chat.action(channelname, "command " + strArray[1] +" removed");
@@ -469,9 +283,9 @@ chat.on('chat', function(channel, user, message, self){
                 else if (strArray.length >= 2){
                     var sentenceArray = strArray.slice(); // Clone array
                     sentenceArray.shift();
-                    keyvalue = Object.keys(config.Alerts.SubMessages).length;
-                    config.Alerts.SubMessages[keyvalue] = sentenceArray.join(" ").toString();
-                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    keyvalue = Object.keys(Config.Alerts.SubMessages).length;
+                    Config.Alerts.SubMessages[keyvalue] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(Config, null, 4), finished());
                     function finished(error){
                         chat.action(channelname, sentenceArray.join(" ") + " submessage added!");
                     }
@@ -494,9 +308,9 @@ chat.on('chat', function(channel, user, message, self){
                 else if (strArray.length >= 2){
                     var sentenceArray = strArray.slice(); // Clone array
                     sentenceArray.shift();
-                    keyvalue = Object.keys(config.Alerts.BanMessages).length;
-                    config.Alerts.BanMessages[keyvalue] = sentenceArray.join(" ").toString();
-                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    keyvalue = Object.keys(Config.Alerts.BanMessages).length;
+                    Config.Alerts.BanMessages[keyvalue] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(Config, null, 4), finished());
                     function finished(error){
                         chat.action(channelname, sentenceArray.join(" ") + " banmessage added!");
                     }
@@ -518,9 +332,9 @@ chat.on('chat', function(channel, user, message, self){
                 else if (strArray.length >= 2){
                     var sentenceArray = strArray.slice(); // Clone array
                     sentenceArray.shift();
-                    keyvalue = Object.keys(config.Alerts.Messages).length;
-                    config.Alerts.Messages[keyvalue] = sentenceArray.join(" ").toString();
-                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    keyvalue = Object.keys(Config.Alerts.Messages).length;
+                    Config.Alerts.Messages[keyvalue] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(Config, null, 4), finished());
                     function finished(error){
                         chat.action(channelname, sentenceArray.join(" ") + " message added!");
                     }
@@ -563,9 +377,9 @@ chat.on('chat', function(channel, user, message, self){
                 else if(strArray.length >= 2){
                     var sentenceArray = strArray.slice(); // Clone array
                     sentenceArray.shift();
-                    keyvalue = Object.keys(config.Alerts.WelcomeMessages).length;
-                    config.Alerts.WelcomeMessage[keyvalue] = sentenceArray.join(" ").toString();
-                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    keyvalue = Object.keys(Config.Alerts.WelcomeMessages).length;
+                    Config.Alerts.WelcomeMessage[keyvalue] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(Config, null, 4), finished());
                     function finished(error){
                         chat.action(channelname, sentenceArray.join(" ") + " welcomemessage added!");
                     }
@@ -587,9 +401,9 @@ chat.on('chat', function(channel, user, message, self){
                 else if(strArray.length >= 2){
                     var sentenceArray = strArray.slice(); // Clone array
                     sentenceArray.shift();
-                    keyvalue = Object.keys(config.Alerts.HostMessages).length;
-                    config.Alerts.HostMessages[keyvalue] = sentenceArray.join(" ").toString();
-                    fs.writeFileSync("./config.json", JSON.stringify(config, null, 4), finished());
+                    keyvalue = Object.keys(Config.Alerts.HostMessages).length;
+                    Config.Alerts.HostMessages[keyvalue] = sentenceArray.join(" ").toString();
+                    fs.writeFileSync("./config.json", JSON.stringify(Config, null, 4), finished());
                     function finished(error){
                         chat.action(channelname, sentenceArray.join(" ") + " host message added!");
                     }
@@ -609,7 +423,12 @@ chat.on('chat', function(channel, user, message, self){
                     chat.action(channelname, "Shoutout who?");
                 }
                 else if (strArray.length == 2){
-                    shoutout(strArray[1]);
+                    (async() => {
+                        BotHelper.Shoutout(strArray[1], function(shoutout){
+                            chat.action(channelname, shoutout);
+                        });
+                    })();
+                    
                 }
             }
         } catch { }
@@ -625,7 +444,7 @@ chat.on('chat', function(channel, user, message, self){
             else if (strArray.length >= 2){
                 var sentenceArray = strArray.slice(); // Clone array
                 sentenceArray.shift();
-                chat.action(channelname, pirateSpeak.translate(sentenceArray.join(" ")));
+                chat.action(channelname, PirateSpeak.translate(sentenceArray.join(" ")));
             }   
         } catch { }
     }
